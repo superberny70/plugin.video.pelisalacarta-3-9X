@@ -22,11 +22,6 @@ logger.info("[default.py] pelisalacarta init...")
 librerias = xbmc.translatePath( os.path.join( config.get_runtime_path(), 'lib' ) )
 sys.path.append (librerias)
 
-import xbmcgui
-dialog = xbmcgui.Dialog()
-dialog.ok(u'Atención',u'Esta es una versión no oficial de pelisalacarta de uso exclusivo para desarrolladores.',
-    u'Puede descargar la versión oficial en http://blog.tvalacarta.info/plugin-xbmc/pelisalacarta/')
-
 # Runs xbmc launcher
 from platformcode.xbmc import launcher
 launcher.run()

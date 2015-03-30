@@ -47,6 +47,13 @@ def EjecutarFuncion(item):
     #Si la acción es mainlist comprueba si hay actualizaciónes para el canal antes de cargarlo.
     if item.action == "mainlist":
         if item.channel=="channelselector":
+            '''
+            Esta advertencia es solo para la version beta
+            '''
+            dialog = xbmcgui.Dialog()
+            dialog.ok(u'Atención',u'Esta es una versión no oficial de pelisalacarta de uso exclusivo para desarrolladores.',
+                u'Puede descargar la versión oficial en http://blog.tvalacarta.info/plugin-xbmc/pelisalacarta/')
+            
             if config.get_setting("updatecheck2")=="true": 
                 itemlist.extend(ActualizarPlugin())
             if config.get_setting("updatechannels")=="true" and len(itemlist)==0: # Si hay una nueva version del plugin no actualizar canales
@@ -194,7 +201,6 @@ def ActualizarCanal(channel, Texto="Actualizado con exíto"):
     logger.info("Verificando actualización de: " + channel)
     actualizado = updater.updatechannel(channel)
     if actualizado:
-        logger.info("[launcher.py] - hola")
         itemlist.append(Item(channel="launcher", action="alert", title=Texto))
   except:
       import sys

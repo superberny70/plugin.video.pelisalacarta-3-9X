@@ -126,27 +126,30 @@ def update(item):
 #################################################
 def get_path_url_channel(channel_name):
     if channel_name == "channelselector":
-        remote_files_url= URL_BASE_REPOSITORIO + '/' + channel_name
+        #remote_files_url= URL_BASE_REPOSITORIO + '/' + channel_name
+        remote_files_url="https://raw.githubusercontent.com/superberny70/plugin.video.pelisalacarta/master/channelselector.py"
         local_files_path=os.path.join( config.get_runtime_path() , channel_name)
     else:
-        remote_files_url= URL_BASE_REPOSITORIO + '/' + PLUGIN_NAME + '/' + "channels" + '/' + channel_name  
+        #remote_files_url= URL_BASE_REPOSITORIO + '/' + PLUGIN_NAME + '/' + "channels" + '/' + channel_name  
+        remote_files_url = "https://raw.githubusercontent.com/superberny70/plugin.video.pelisalacarta/master/pelisalacarta/channels/" +  channel_name 
         local_files_path=os.path.join( config.get_runtime_path(), PLUGIN_NAME , 'channels' , channel_name)
     return remote_files_url, local_files_path
    
 def updatechannel(channel_name):
     '''
-    Funcion experimental para actualizar los canales desde github basandose en lka fecha de modificacion de los archivos.
+    Funcion experimental para actualizar el canal desde github basandose en la fecha de modificacion de los archivos.
     '''
     remote_files_url = "https://github.com/superberny70/plugin.video.pelisalacarta/tree/master/pelisalacarta/channels"
-    local_files_path=os.path.join( config.get_runtime_path(), PLUGIN_NAME , 'channels' , channel_name)
+    local_files_path=os.path.join( config.get_runtime_path(), PLUGIN_NAME , 'channels' , channel_name+'.py')
  
     data = re.sub(r"\n|\r|\t|\s{2}|(<!--.*?-->)","",scrapertools.cache_page(remote_files_url))
     #last_commit= scrapertools.find_single_match(data,'<time class="updated" datetime="([^"]+)"')
     
-    patron = '<td class="content">.*?title="'+ channel_name +'".*?' 
+    patron = '<td class="content">.*?title="'+ channel_name +'\.py".*?' 
     patron += '<time datetime="([^"]+)"' # date_time
-
+    
     date= scrapertools.find_single_match(data,patron).replace('T',' ').replace('Z','')
+    
     if date =='': # El canal no esta en el repositorio remoto
         return False
         
@@ -154,9 +157,10 @@ def updatechannel(channel_name):
     dt_remote = datetime.datetime.fromtimestamp(time.mktime(struct))
     
     if os.path.exists(local_files_path):
-        dt_local =datetime.datetime.fromtimestamp(os.path.getmtime (os.path.join( local_files_path, s)))
+        dt_local =datetime.datetime.fromtimestamp(os.path.getmtime (local_files_path))
     
-    if dt1 > dt2:
+    #logger.info("[updater.py] remote_data= "+str(dt_remote) + " local_data= " + str(dt_local ))
+    if dt_remote > dt_local:
         return download_channel(channel_name)
         
     return False
@@ -208,7 +212,7 @@ def download_channel(channel_name):
     for ext in ['.xml', '.py']:
         try:
             updated_data = scrapertools.cachePage(remote_files_url + ext)
-            if scrapertools.find_single_match(updated_data,'<title>404 Not Found</title>') !="": 
+            if scrapertools.find_single_match(updated_data,'<title>Page not found') !="": 
                 continue
             
             outfile = open(local_files_path + ext ,"w")
@@ -250,12 +254,12 @@ def download_channel(channel_name):
 def list_remote_channels():
     '''
     Obtiene una lista de los canales remotos, analizando la web del repositorio.
-    Si se cambia de SVN a GitHub esto hay q modificarlo
     '''
-    remote_files_url = "http://xbmc-tvalacarta.googlecode.com/svn/trunk/pelisalacarta/pelisalacarta/channels/"
+    remote_files_url = "https://github.com/superberny70/plugin.video.pelisalacarta/tree/master/pelisalacarta/channels"
             
     data = re.sub(r"\n|\r|\t|\s{2}|(<!--.*?-->)","",scrapertools.cache_page(remote_files_url))
-    patron = '<li><a href="([a-zA-Z0-9]+\.py)">.*?</a></li>'
+    #patron = '<li><a href="([a-zA-Z0-9]+\.py)">.*?</a></li>'
+    patron = '<td class="content">.*?title="([a-zA-Z0-9]+\.py)">'
     files_remotos= re.compile(patron,re.DOTALL).findall(data)
         
     #logger.info("updater.list_remote_channels :"  + str(files_remotos))
