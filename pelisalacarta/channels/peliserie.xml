@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<version>
+	<name>peliserie</name>
+	<tag>3</tag>
+	<date>18/03/2015</date>
+	<changes>Corregido bug syntax error en TMDB</changes>
+</version>
