@@ -14,10 +14,12 @@ from core.item import Item
 from servers import servertools
 
 __channel__ = "zentorrents"
-__category__ = "F"
+__adult__ = "false"
+__category__ = "F,S"
 __type__ = "generic"
 __title__ = "Zentorrents"
 __language__ = "ES"
+__thumbnail__ = "http://s6.postimg.org/9zv90yjip/zentorrentlogo.jpg"
 
 DEBUG = config.get_setting("debug")
 

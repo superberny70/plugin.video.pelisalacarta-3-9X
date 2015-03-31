@@ -24,6 +24,7 @@ from servers import vk
 from pelisalacarta import buscador
 
 __channel__ = "sonolatino"
+__adult__ = "false"
 __category__ = "M"
 __type__ = "xbmc"
 __title__ = "Sonolatino"

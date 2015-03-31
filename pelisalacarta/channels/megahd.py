@@ -15,11 +15,12 @@ from core.item import Item
 from servers import servertools
 
 __channel__ = "megahd"
-__category__ = "F"
+__category__ = "F,S,D,A"
 __type__ = "generic"
 __title__ = "Megahd"
 __language__ = "ES"
-__adult__ = "true"
+__adult__ = "false"
+__thumbnail__ = "http://s6.postimg.org/9ud7f5emp/megahd.jpg"
 
 DEBUG = config.get_setting("debug")
 

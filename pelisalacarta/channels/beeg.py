@@ -17,6 +17,10 @@ from core.item import Item
 from servers import servertools
 
 __channel__ = "beeg"
+__adult__ = "true"
+__category__ = "F,X"
+__type__ = "generic"
+__title__ ="Beeg"
 DEBUG = config.get_setting("debug")
 
 def isGeneric():

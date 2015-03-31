@@ -14,11 +14,13 @@ from core.item import Item
 from servers import servertools
 
 __channel__ = "pornhub"
-__category__ = "F"
+__adult__ = "true"
+__category__ = "F,X"
 __type__ = "generic"
 __title__ = "PornHub"
 __language__ = "ES"
 __fanart__="http://i.imgur.com/PwFvoss.jpg"
+__thumbnail__ = "http://s22.postimg.org/5lzcocfqp/pornhub_logo.jpg"
 
 DEBUG = config.get_setting("debug")
 

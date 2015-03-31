@@ -20,6 +20,7 @@ __category__ = "A"
 __type__ = "generic"
 __title__ = "Quiero dibujos animados"
 __channel__ = "quierodibujosanimados"
+__adult__ = "false"
 __language__ = "ES"
 __creationdate__ = "20121112"
 

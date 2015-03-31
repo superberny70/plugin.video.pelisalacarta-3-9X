@@ -15,10 +15,12 @@ from core.item import Item
 from servers import servertools
 
 __channel__ = "pelisadicto"
+__adult__ = "false"
 __category__ = "F"
 __type__ = "generic"
 __title__ = "Pelisadicto"
 __language__ = "ES"
+__thumbnail__ = "http://s6.postimg.org/a25fpeez5/pelisadicto.jpg"
 
 DEBUG = config.get_setting("debug")
 

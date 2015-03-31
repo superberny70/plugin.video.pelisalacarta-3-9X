@@ -14,6 +14,7 @@ from core.item import Item
 from servers import servertools
 
 __channel__ = "documaniatv"
+__adult__ = "false"
 __category__ = "D"
 __type__ = "generic"
 __title__ = "DocumaniaTV"

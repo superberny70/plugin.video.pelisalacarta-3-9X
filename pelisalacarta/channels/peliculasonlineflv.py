@@ -14,6 +14,7 @@ from core.item import Item
 from servers import servertools
 
 __channel__ = "peliculasonlineflv"
+__adult__ = "false"
 __category__ = "F,D"
 __type__ = "generic"
 __title__ = "Peliculas Online FLV"

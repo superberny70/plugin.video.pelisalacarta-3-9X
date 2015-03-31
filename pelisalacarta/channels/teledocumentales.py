@@ -17,6 +17,7 @@ from pelisalacarta import buscador
 from servers import servertools
 
 __channel__ = "teledocumentales"
+__adult__ = "false"
 __category__ = "D"
 __type__ = "generic"
 __title__ = "Teledocumentales"

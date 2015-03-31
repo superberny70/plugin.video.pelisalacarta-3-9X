@@ -13,10 +13,12 @@ from core.item import Item
 from servers import servertools
 
 __channel__ = "sintonizzate"
+__adult__ = "false"
 __category__ = "F"
 __type__ = "generic"
 __title__ = "Sintonizzate.me"
 __language__ = "ES"
+__thumbnail__ = "http://s6.postimg.org/4zsp8cv2p/sintonizzate.jpg" 
 
 DEBUG = config.get_setting("debug")
 

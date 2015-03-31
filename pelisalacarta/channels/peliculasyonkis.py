@@ -18,6 +18,15 @@ from core import config
 from core import logger
 from pelisalacarta import buscador
 
+__adult__= "false"
+__category__ = "F"
+__type__ = "generic"
+__title__ = "Películas Yonkis"
+__channel__ = "peliculasyonkis"
+__language__ = "ES"
+
+
+
 CHANNELNAME = "peliculasyonkis"
 SERVER = {'pymeno2'   :'Megavideo' ,'pymeno3':'Megavideo','pymeno4':'Megavideo','pymeno5':'Megavideo','pymeno6':'Megavideo',
           'svueno'    :'Stagevu'   ,

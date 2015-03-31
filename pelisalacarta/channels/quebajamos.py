@@ -16,13 +16,14 @@ from core.item import Item
 from servers import servertools
 
 DEBUG = config.get_setting("debug")
-
+__adult__= "true"
 __category__ = "A"
 __type__ = "generic"
 __title__ = "Quebajamos"
 __channel__ = "quebajamos"
 __language__ = "ES"
 __creationdate__ = "20140615"
+__thumbnail__ =  "http://s6.postimg.org/j8nqcok7l/quebajmos.jpg"
 
 DEFAULT_HEADERS = []
 DEFAULT_HEADERS.append( ["User-Agent","Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.6; es-ES; rv:1.9.2.12) Gecko/20101026 Firefox/3.6.12"] )
@@ -32,7 +33,7 @@ def isGeneric():
 
 def login():
 
-    url = "http://webtv.quebajamos.com/process.php"
+    url = "http://webtv.quebajamos.co/process.php"
     post = "sublogin=1&user="+config.get_setting("quebajamosuser")+"&pass="+config.get_setting("quebajamospassword")
     data = scrapertools.cache_page(url,post=post)
 
@@ -45,17 +46,17 @@ def mainlist(item):
         itemlist.append( Item( channel=__channel__ , title="Habilita tu cuenta en la configuración..." , action="openconfig" , url="" , folder=False ) )
     else:
         login()
-        itemlist.append( Item(channel=__channel__, action="peliculas"   , title="Lo último"       , url="http://webtv.quebajamos.com/" ))
-        itemlist.append( Item(channel=__channel__, action="peliculas"   , title="Estrenos"        , url="http://webtv.quebajamos.com/estrenos" ))
-        itemlist.append( Item(channel=__channel__, action="peliculas"   , title="Películas"       , url="http://webtv.quebajamos.com/peliculas" ))
-        itemlist.append( Item(channel=__channel__, action="peliculas"   , title="Películas HD"    , url="http://webtv.quebajamos.com/hd" ))
-        itemlist.append( Item(channel=__channel__, action="peliculas"   , title="Películas 3D"    , url="http://webtv.quebajamos.com/3d" ))
-        itemlist.append( Item(channel=__channel__, action="series"   , title="Series"          , url="http://webtv.quebajamos.com/series" ))
-        itemlist.append( Item(channel=__channel__, action="series"   , title="Series HD"       , url="http://webtv.quebajamos.com/serieshd" ))
-        itemlist.append( Item(channel=__channel__, action="series"   , title="Documentales"    , url="http://webtv.quebajamos.com/programastv" ))
-        itemlist.append( Item(channel=__channel__, action="series"   , title="Zona deportes"   , url="http://webtv.quebajamos.com/zonadeportiva" ))
-        itemlist.append( Item(channel=__channel__, action="series"   , title="XXX"             , url="http://webtv.quebajamos.com/xxx" ))
-        itemlist.append( Item(channel=__channel__, action="search"    , title="Buscar..."       , url="http://webtv.quebajamos.com/search?buscar=" ))
+        itemlist.append( Item(channel=__channel__, action="peliculas"   , title="Lo último"       , url="http://webtv.quebajamos.co/" ))
+        itemlist.append( Item(channel=__channel__, action="peliculas"   , title="Estrenos"        , url="http://webtv.quebajamos.co/estrenos" ))
+        itemlist.append( Item(channel=__channel__, action="peliculas"   , title="Películas"       , url="http://webtv.quebajamos.co/peliculas" ))
+        itemlist.append( Item(channel=__channel__, action="peliculas"   , title="Películas HD"    , url="http://webtv.quebajamos.co/hd" ))
+        itemlist.append( Item(channel=__channel__, action="peliculas"   , title="Películas 3D"    , url="http://webtv.quebajamos.co/3d" ))
+        itemlist.append( Item(channel=__channel__, action="series"   , title="Series"          , url="http://webtv.quebajamos.co/series" ))
+        itemlist.append( Item(channel=__channel__, action="series"   , title="Series HD"       , url="http://webtv.quebajamos.co/serieshd" ))
+        itemlist.append( Item(channel=__channel__, action="series"   , title="Documentales"    , url="http://webtv.quebajamos.co/programastv" ))
+        itemlist.append( Item(channel=__channel__, action="series"   , title="Zona deportes"   , url="http://webtv.quebajamos.co/zonadeportiva" ))
+        itemlist.append( Item(channel=__channel__, action="series"   , title="XXX"             , url="http://webtv.quebajamos.co/xxx" ))
+        itemlist.append( Item(channel=__channel__, action="search"    , title="Buscar..."       , url="http://webtv.quebajamos.co/search?buscar=" ))
        
     return itemlist
 
@@ -68,7 +69,7 @@ def search(item,texto):
     logger.info("pelisalacarta.channels.quebajamos search")
 
     if item.url=="":
-        item.url="http://webtv.quebajamos.com/search?buscar="
+        item.url="http://webtv.quebajamos.co/search?buscar="
 
     texto = texto.replace(" ","+")
 

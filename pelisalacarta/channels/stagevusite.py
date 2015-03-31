@@ -22,6 +22,7 @@ from servers import vk
 from pelisalacarta import buscador
 
 __channel__ = "stagevusite"
+__adult__ = "false"
 __category__ = "G"
 __type__ = "xbmc"
 __title__ = "Stagevu"

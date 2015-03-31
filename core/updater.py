@@ -227,9 +227,10 @@ def download_channel(channel_name):
                     with codecs.open(PATH_LIST_CHANNELS_JSON,'r','utf-8') as input_file:
                         indice_canales= json.load(input_file)
                     
+                    # ... actualizamos los atributos del canal...
                     indice_canales[channel_name + '.py']= scraper_channel_py(updated_data)
-                    #indice_canales[channel_name + '.py']= read_channel_py('cuelgame.py')
                     
+                    #...y lo volvemos a guardar
                     with codecs.open(PATH_LIST_CHANNELS_JSON,'w','utf-8') as outfile:
                         json.dump(indice_canales,outfile,sort_keys = True, indent = 4, ensure_ascii=False,encoding="utf8")
                        
@@ -376,10 +377,12 @@ def scraper_channel_py(data_channel_py):
     type= scrapertools.find_single_match(data_channel_py,'__type__="([^"]+)"').decode('utf-8')
     adult= scrapertools.find_single_match(data_channel_py,'__adult__="([^"]+)"').decode('utf-8')
     thumbnail= scrapertools.find_single_match(data_channel_py,'__thumbnail__="([^"]+)"').decode('utf-8')
+    '''
     version= scrapertools.find_single_match(data_channel_py,'__version__="([^"]+)"').decode('utf-8')
     if version=='': version=u'0'
-    
     return {"title": title, "channel":channel, "language":language, "category":category, "type":type, "adult":adult, "thumbnail":thumbnail, "version":version}
+    '''
+    return {"title": title, "channel":channel, "language":language, "category":category, "type":type, "adult":adult, "thumbnail":thumbnail}
 
 def ini_list_channels_json():
     '''

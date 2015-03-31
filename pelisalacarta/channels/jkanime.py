@@ -20,6 +20,7 @@ __category__ = "A"
 __type__ = "generic"
 __title__ = "JKanime"
 __channel__ = "jkanime"
+__adult__ = "false"
 __language__ = "ES"
 __creationdate__ = "20121015"
 

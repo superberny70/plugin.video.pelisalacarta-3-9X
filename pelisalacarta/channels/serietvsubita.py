@@ -14,10 +14,12 @@ from core.item import Item
 from servers import servertools
 
 __channel__ = "serietvsubita"
+__adult__ = "false"
 __category__ = "F,S,D"
 __type__ = "generic"
-__title__ = "serietvsubita"
-__language__ = "ES"
+__title__ = "Serie TV Sub ITA"
+__language__ = "IT"
+__thumbnail__ = "http://s6.postimg.org/5qlfe4xg1/serietvsubita.jpg"
 
 DEBUG = config.get_setting("debug")
 

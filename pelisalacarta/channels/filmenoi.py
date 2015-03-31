@@ -14,11 +14,13 @@ from core.item import Item
 from servers import servertools
 
 __channel__ = "filmenoi"
+__adult__ = "false"
 __category__ = "F,S"
 __type__ = "generic"
 __title__ = "Filme-noi.com"
 __language__ = "ES"
 __creationdate__ = "20131223"
+__thumbnail__ = "http://s6.postimg.org/qxbdwx5xt/filmenoi.jpg"
 
 DEBUG = config.get_setting("debug")
 

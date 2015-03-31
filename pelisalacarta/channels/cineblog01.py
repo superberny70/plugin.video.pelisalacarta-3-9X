@@ -15,6 +15,7 @@ from core import config
 from core.item import Item
 
 __channel__ = "cineblog01"
+__adult__ = "false"
 __category__ = "F,S,A"
 __type__ = "generic"
 __title__ = "Cineblog01 (IT)"

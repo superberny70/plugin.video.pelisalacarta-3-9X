@@ -21,6 +21,7 @@ __category__ = "A"
 __type__ = "generic"
 __title__ = "YouAnimeHd"
 __channel__ = "youanimehd"
+__adult__ = "false"
 __language__ = "ES"
 __creationdate__ = "130202"
 

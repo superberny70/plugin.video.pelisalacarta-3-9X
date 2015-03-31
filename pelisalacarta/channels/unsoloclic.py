@@ -14,6 +14,7 @@ from core.item import Item
 from servers import servertools
 
 __channel__ = "unsoloclic"
+__adult__ = "false"
 __category__ = "F,S"
 __type__ = "generic"
 __title__ = "Unsoloclic.info"

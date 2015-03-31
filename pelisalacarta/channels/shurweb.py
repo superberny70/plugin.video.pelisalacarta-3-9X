@@ -14,6 +14,7 @@ from core.item import Item
 from servers import servertools
 
 __channel__ = "shurweb"
+__adult__ = "false"
 __category__ = "F,S,D,A"
 __type__ = "generic"
 __title__ = "Shurweb"

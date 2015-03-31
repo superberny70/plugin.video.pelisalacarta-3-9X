@@ -21,6 +21,7 @@ from servers import vk
 from pelisalacarta import buscador
 
 __channel__ = "nolomires"
+__adult__ = "false"
 __category__ = "F"
 __type__ = "xbmc"
 __title__ = "NoloMires"

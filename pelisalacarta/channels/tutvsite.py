@@ -15,6 +15,7 @@ from core.item import Item
 from servers import servertools
 
 __channel__ = "tutvsite"
+__adult__ = "false"
 __category__ = "G"
 __type__ = "generic"
 __title__ = "tu.tv"

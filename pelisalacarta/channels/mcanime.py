@@ -14,6 +14,7 @@ from core.item import Item
 from servers import servertools
 
 __channel__ = "mcanime"
+__adult__ = "false"
 __category__ = "A"
 __type__ = "generic"
 __title__ = "MCAnime"

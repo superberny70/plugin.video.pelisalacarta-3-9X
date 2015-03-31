@@ -15,6 +15,7 @@ from servers import servertools
 PLUGIN_NAME = "pelisalacarta"
 
 __channel__ = "seriesdanko"
+__adult__ = "false"
 __category__ = "S"
 __type__ = "generic"
 __title__ = "Seriesdanko"

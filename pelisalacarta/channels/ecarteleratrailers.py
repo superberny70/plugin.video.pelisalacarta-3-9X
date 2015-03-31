@@ -17,6 +17,7 @@ from servers import servertools
 DEBUG = config.get_setting("debug")
 
 __channel__ = "ecarteleratrailers"
+__adult__ = "false"
 __category__ = "F"
 __type__ = "generic"
 __title__ = "Trailers ecartelera"

@@ -19,6 +19,8 @@ __category__ = "F,S,D"
 __type__ = "generic"
 __title__ = "SeriesMU"
 __language__ = "ES"
+__thumbnail__ = "http://s17.postimg.org/jcasctj0v/smlogo.jpg"  
+__adult__ = "false"
 
 DEBUG = config.get_setting("debug")
 host = "http://series.mu/"
@@ -115,12 +117,12 @@ def buscador(item, ):
     for scrapedurl, scrapedthumbnail, scrapedtitle in matches:
         scrapedurl = urlparse.urljoin(host, scrapedurl)
         if "series" in scrapedurl:
-            action= "temporadas"
+            action= "episodios"
             
         if "peli" in scrapedurl:
                 action="peliculas"
     
-        itemlist.append( Item(channel=__channel__, title =scrapedtitle , url=scrapedurl, action=action, thumbnail= scrapedthumbnail, fanart="http://s21.postimg.org/gmwquc5hz/smfan2.jpg", folder=True) )
+        itemlist.append( Item(channel=__channel__, title =scrapedtitle , url=scrapedurl, action=action, thumbnail= scrapedthumbnail, fanart="http://s21.postimg.org/gmwquc5hz/smfan2.jpg", show=scrapedtitle, folder=True) )
 
     return itemlist
 
@@ -142,9 +144,9 @@ def mis_series(item):
 
     for scrapedurl, scrapedthumbnail, scrapedtitle in matches:
         scrapedurl = urlparse.urljoin(host, scrapedurl)
-        scrapedtitle = scrapedtitle.replace(scrapedtitle,"[COLOR sandybrown][B]"+scrapedtitle+"[/B][/COLOR]")
+        title = scrapedtitle.replace(scrapedtitle,"[COLOR sandybrown][B]"+scrapedtitle+"[/B][/COLOR]")
         
-        itemlist.append( Item(channel=__channel__, title =scrapedtitle , url=scrapedurl, action="temporadas", thumbnail=scrapedthumbnail, fanart="http://s21.postimg.org/gmwquc5hz/smfan2.jpg", folder=True) )
+        itemlist.append( Item(channel=__channel__, title =title , url=scrapedurl, action="episodios", thumbnail=scrapedthumbnail, fanart="http://s21.postimg.org/gmwquc5hz/smfan2.jpg", show=scrapedtitle, folder=True) )
 
     return itemlist
 
@@ -174,17 +176,17 @@ def catalogo(item):
 
         for scrapedurl, scrapedthumbnail, scrapedtitle, scrapedinfo in matches:
             scrapedinfo = scrapedinfo.replace(scrapedinfo,"[COLOR gold]"+scrapedinfo+"[/COLOR]")
-            scrapedtitle = scrapedtitle.replace(scrapedtitle,"[COLOR white]"+scrapedtitle+"[/COLOR]")
-            title = scrapedtitle +  " (" + scrapedinfo + ")"
+            title = scrapedtitle.replace(scrapedtitle,"[COLOR white]"+scrapedtitle+"[/COLOR]")
+            title = title +  " (" + scrapedinfo + ")"
             scrapedurl = urlparse.urljoin(host, scrapedurl)
             if "series" in scrapedurl:
-                action= "temporadas"
+                action= "episodios"
             
             if "peli" in scrapedurl:
                 action="peliculas"
         
         
-            itemlist.append( Item(channel=__channel__, title =title , url=scrapedurl, action=action, thumbnail=scrapedthumbnail, fanart="http://s21.postimg.org/gmwquc5hz/smfan2.jpg", folder=True) )
+            itemlist.append( Item(channel=__channel__, title =title , url=scrapedurl, action=action, thumbnail=scrapedthumbnail, fanart="http://s21.postimg.org/gmwquc5hz/smfan2.jpg", show=scrapedtitle, folder=True) )
     ## Paginación
     try:
         next_page = scrapertools.get_match(data,'<a href="([^"]+)">Siguiente &rsaquo;</a></li></ul></div></div></div>')
@@ -243,8 +245,8 @@ def peliculas(item):
     return itemlist
 
 
-def temporadas(item):
-    logger.info("pelisalacarta.seriesmu temporadas")
+def episodios(item):
+    logger.info("pelisalacarta.seriesmu episodios")
     itemlist = []
     
     
@@ -252,35 +254,40 @@ def temporadas(item):
     data = scrapertools.cache_page(item.url)
     data = re.sub(r"\n|\r|\t|\s{2}|&nbsp;","",data)
     
-    seguir = scrapertools.get_match(data,'<ul><li text="Siguiendo" color="green" class="([^"]+)"')
-    abandonar = scrapertools.get_match(data,'<li text="Abandonada" color="red" class="([^"]+)">')
+    try:
+        seguir = scrapertools.get_match(data,'<ul><li text="Siguiendo" color="green" class="([^"]+)"')
+        abandonar = scrapertools.get_match(data,'<li text="Abandonada" color="red" class="([^"]+)">')
+    except:
+        seguir = scrapertools.get_match(data,'<ul><li text="" color="green" class="([^"]+)"')
+        abandonar = scrapertools.get_match(data,'<li text="" color="red" class="([^"]+)">')
     fanart = scrapertools.get_match(data,'<div class="media-cover" style="background-image: url\(http://series.mu([^"]+)\)')
     fanart = urlparse.urljoin(host, fanart)
     seguir = urlparse.urljoin(host, seguir)
     abandonar = urlparse.urljoin(host, abandonar)
    
-    if '<div class=""></div>' in data:
-        action="seguir"
-        title= "Seguir"
-        title = title.replace(title,"[COLOR yellow]"+title+"[/COLOR]")
-        thumbnail= "http://s14.postimg.org/ca5boj275/smseguir.png"
-
-
-    else:
-        action="siguiendo"
-        title= "Siguiendo"
-        title = title.replace(title,"[COLOR green]"+title+"[/COLOR]")
-        thumbnail="http://s28.postimg.org/ugtnbj6z1/smsiguiendo2.png"
-    
-    itemlist.append( Item(channel=item.channel, title=title, url=seguir, fanart=fanart, thumbnail=thumbnail, action=action))
-
-    if '<div class="green">' in data:
+    if not item.title.endswith("XBMC"):
+        if '<div class=""></div>' in data:
+            action="seguir"
+            title= "Seguir"
+            title = title.replace(title,"[COLOR yellow]"+title+"[/COLOR]")
+            thumbnail= "http://s14.postimg.org/ca5boj275/smseguir.png"
         
-        action="abandono"
-        title= "Abandonar"
-        title = title.replace(title,"[COLOR red]"+title+"[/COLOR]")
+        
+        else:
+            action="siguiendo"
+            title= "Siguiendo"
+            title = title.replace(title,"[COLOR green]"+title+"[/COLOR]")
+            thumbnail="http://s28.postimg.org/ugtnbj6z1/smsiguiendo2.png"
 
-        itemlist.append( Item(channel=item.channel, title=title, url=abandonar, fanart=fanart, thumbnail="http://s18.postimg.org/hh4l8hj1l/smabandonar2.png", action=action))
+        itemlist.append( Item(channel=item.channel, title=title, url=seguir, fanart=fanart, thumbnail=thumbnail, action=action))
+        
+        if '<div class="green">' in data:
+            
+           action="abandono"
+           title= "Abandonar"
+           title = title.replace(title,"[COLOR red]"+title+"[/COLOR]")
+            
+           itemlist.append( Item(channel=item.channel, title=title, url=abandonar, fanart=fanart, thumbnail="http://s18.postimg.org/hh4l8hj1l/smabandonar2.png", action=action))
 
 
 
@@ -331,8 +338,10 @@ def temporadas(item):
             fanart = urlparse.urljoin(host, fanart)
             scrapedurl = urlparse.urljoin(host, scrapedurl)
         
-            itemlist.append( Item(channel=__channel__, title =scrapedtitle , url=scrapedurl, action="findvideos", thumbnail=item.thumbnail, plot=scrapedplot, fanart=fanart, folder=True) )
-        
+            itemlist.append( Item(channel=__channel__, title =scrapedtitle , url=scrapedurl, action="findvideos", thumbnail=item.thumbnail, plot=scrapedplot, fanart=fanart, show=item.show, folder=True) )
+    if (config.get_platform().startswith("xbmc") or config.get_platform().startswith("boxee")) and len(itemlist)>0:
+       itemlist.append( Item(channel=__channel__, title="Añadir esta serie a la biblioteca de XBMC", url=item.url, action="add_serie_to_library", extra="episodios", show=item.show) )
+    
 
 
 

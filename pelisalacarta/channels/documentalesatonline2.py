@@ -17,6 +17,7 @@ from servers import servertools
 import xml.dom.minidom
 
 __channel__ = "documentalesatonline2"
+__adult__ = "false"
 __category__ = "D"
 __type__ = "generic"
 __title__ = "La Guarida de bizzente"

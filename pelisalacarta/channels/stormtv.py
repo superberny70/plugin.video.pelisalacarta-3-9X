@@ -32,6 +32,8 @@ LANG =stormlib.getlang()
 SERVERS =stormlib.getservers()
 SERVER = "https://"+__server__+"/stormtv/public/"
 STATIC_SERVER= "http://"+__server__+"/stormtv/public/"
+ALL_SERVERS = list( set(servertools.FREE_SERVERS) | set(servertools.FILENIUM_SERVERS) | set(servertools.REALDEBRID_SERVERS) | set(servertools.ALLDEBRID_SERVERS) )
+ALL_SERVERS.sort()
 def isGeneric():
     return True
 
@@ -576,7 +578,7 @@ def findvideos(item):
         	pat_real=pat_real+real+"|"
         pat_real=pat_real[:len(pat_real)-1]+")"
         pat_all_servers="("
-	for all_server in servertools.ALL_SERVERS:
+	for all_server in ALL_SERVERS:
 		pat_all_servers=pat_all_servers+all_server+"|"
 	pat_all_servers=pat_all_servers[:len(pat_all_servers)-1]+")" 
         #logger.info("pat_free"+pat_free)

@@ -21,6 +21,7 @@ __category__ = "S"
 __type__ = "generic"
 __title__ = "seriesflv"
 __channel__ = "seriesflv"
+__adult__ = "false"
 __language__ = "ES"
 __creationdate__ = "20140615"
 

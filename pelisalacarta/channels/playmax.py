@@ -22,12 +22,9 @@ __title__ = "PlayMax"
 __channel__ = "playmax"
 __language__ = "ES"
 __creationdate__ = "20141217"
+__thumbnail__ = "http://s6.postimg.org/lkvqa9wsx/playmax.jpg" 
 
 host = "http://playmax.es/"
-
-sendHeader = [
-    ['User-Agent','Mozilla/5.0 (Windows NT 6.1; WOW64; rv:34.0) Gecko/20100101 Firefox/34.0']
-]
 
 def isGeneric():
     return True
@@ -42,10 +39,12 @@ def mainlist(item):
 
     itemlist = []
 
+    ## Sólo se usa 'login' en findvideos. El que no esté registrado podrá ojear pero no verá enlaces alos vídeos 
     if config.get_setting("playmaxaccount")!="true":
-        itemlist.append( Item( channel=__channel__ , title="Habilita tu cuenta en la configuración..." , action="openconfig" , url="" , folder=False ) )
-    else:
-        itemlist.append( Item(channel=__channel__, action="series", title="Series", url=host + "catalogo.php?tipo=1" ))
+        itemlist.append( Item( channel=__channel__ , title="Habilita tu cuenta en la configuración para poder ver los enlaces a los vídeos..." , action="openconfig" , url="" , folder=False ) )
+    #else:
+    #    itemlist.append( Item(channel=__channel__, action="series", title="Series", url=host + "catalogo.php?tipo=1" ))
+    itemlist.append( Item(channel=__channel__, action="series", title="Series", url=host + "catalogo.php?tipo=1" ))
 
     return itemlist
 
@@ -56,25 +55,20 @@ def series(item):
 
     # Descarga la página
     data = scrapertools.cache_page(item.url)
-    data = re.sub(r"\n|\r|\t|\s{2}|&nbsp;|<br>","",data)
-    data = re.sub(r"<!--.*?-->","",data)
+    ## Agrupa los datos
+    data = re.sub(r'\n|\r|\t|&nbsp;|<br>','',data)
+    data = re.sub(r'\s+',' ',data)
+    data = re.sub(r'<!--.*?-->','',data)
 
-    #<div class="divjustify" id="35615" name="1" style="position: relative; margin-bottom: 5px; height:225px; width: 135px; margin-left: 19px; margin-right: 19px; text-align: center; sans-serif; color: #333;">
-    #<a href="./better-call-saul-f35615">
-    #<img title="Better Call Saul" style="border-radius: 3px; height:200px;" src="./caratula35615">
-    #</a>
-    #<span style="text-overflow: ellipsis;overflow: hidden;width: 145px;white-space: nowrap;word-wrap: normal;text-align: center;display: block; margin-left: -5px;">Better Call Saul</span>
-    #<div style="position: absolute;top: 0px;width: 30px; height: 30px;right: 0px;font-size: 13px; font-weight: bold; color: #f77f00; text-align: center; line-height: 30px; background-color: rgba(255, 255, 255, 0); border-bottom-left-radius: 3px;"></div>
-    #</div>
+    #<div onMouseOver="marcar_on('281', '1')" onMouseOut="marcar_of('281', '1')" class="divjustify" id="281" name="1" style="position: relative; margin-bottom: 5px; height:225px; width: 135px; margin-left: 19px; margin-right: 19px; text-align: center; sans-serif; color: #333;"><a href="./the-walking-dead-f281"><img title="The Walking Dead" class="bimg" style="border-radius: 3px; height:200px; width: 135px;" src="./caratula281"></a> <br> <span style="text-overflow: ellipsis;overflow: hidden;width: 145px;white-space: nowrap;word-wrap: normal;text-align: center;display: block; margin-left: -5px;">The Walking Dead</span><div style="position: absolute;top: 0px;width: 30px; height: 30px;right: 0px;font-size: 13px; font-weight: bold; color: #f77f00; text-align: center; line-height: 30px; background-color: rgba(255, 255, 255, 0.8); border-bottom-left-radius: 3px;">9.3</div></div> <span id="pos1"></span>
 
-    patron = '<div class="divjustify" id="\d+" name="\d+"[^>]+>'
-    patron+= '<a href="([^"]+)">'
-    patron+= '<img title="([^"]+)".*?src="([^"]+)">'
+    patron = '<a href="([^"]+)"><img title="([^"]+)".*?src="([^"]+)"></a>.*?<div[^>]+>([^<]+)</div>'
 
     matches = re.compile(patron,re.DOTALL).findall(data)
 
-    for scrapedurl, scrapedtitle, scrapedthumbnail in matches:
-        itemlist.append( Item(channel=__channel__, title=scrapedtitle, url=urlparse.urljoin(host,scrapedurl), action="episodios", thumbnail=urlparse.urljoin(host,scrapedthumbnail), show=scrapedtitle) )
+    for scrapedurl, scrapedtitle, scrapedthumbnail, scrapedpuntuacion in matches:
+        title = scrapedtitle+" ("+scrapedpuntuacion+")" 
+        itemlist.append( Item(channel=__channel__, title=title, url=urlparse.urljoin(host,scrapedurl), action="episodios", thumbnail=urlparse.urljoin(host,scrapedthumbnail), show=scrapedtitle) )
 
     # paginación
     patron = '<a href="([^"]+)">Siguiente</a>'
@@ -91,29 +85,26 @@ def episodios(item):
 
     # Descarga la página
     data = scrapertools.cache_page(item.url)
-    data = re.sub(r"\n|\r|\t|\s{2}|&nbsp;|<br>","",data)
-    data = re.sub(r"<!--.*?-->","",data)
+    ## Agrupa los datos
+    data = re.sub(r'\n|\r|\t|&nbsp;|<br>','',data)
+    data = re.sub(r'\s+',' ',data)
+    data = re.sub(r'<!--.*?-->','',data)
 
-    #function load_links(value){var url = './c_enlaces.php?ficha=259&id=' + value + '&key=ZHB6YXE=';
+    #function load_links(value){var url = './c_enlaces.php?ficha=128&id=' + value + '&key=ZHB6YXE=';
     #^_______API+Número de la ficha:______^______Lo que usaremos________^______No nos interesa_____^
 
     patron = "var url = '([^']+)'"
-    enlace = scrapertools.find_single_match(data,patron)
+    enlace = scrapertools.get_match(data,patron)
 
-    #Temporadas y bloque de episodios por temporada
-    patron = '<divd class="tabbertab "><h2>T(\d+)</h2>(.*?)</divdd></divdd></divdd></divdd></divd>'
-    temporadas = re.compile(patron,re.DOTALL).findall(data)
+    #onclick="load_links_dos('5126', 'Viendo The Walking Dead 1x01 - Días pasados', 'Días pasados', '1X01', '5125', '5127')"
+    #_API+Número de episodio_^_id_^_________^_________scrapedtitle_______________^__^___________No nos interesa___________^
 
-    for temporada, episodios in temporadas:
-        patron = 'load_links\(([^\)]+)\)'
-        patron+= '.*?'
-        patron+= '<divd class="enlacesdos">(\d+)</divd>([^<]+)</divd>'
-        matches = re.compile(patron,re.DOTALL).findall(episodios)
+    patron = "load_links_dos.'([^']+)', 'Viendo ([^']+)'"
+    all_episodes = re.compile(patron,re.DOTALL).findall(data)
 
-        for id, episodio, titulo in matches:
-            title = temporada + "x" + episodio + " - " + titulo
-            url = enlace + id + "&key=ZHp6ZG0="
-            itemlist.append( Item(channel=__channel__, title=title, url=urlparse.urljoin(host,url), action="findvideos", thumbnail=item.thumbnail, show=item.show) )
+    for id, scrapedtitle in all_episodes:
+        url = enlace + id + "&key=ZHp6ZG0="
+        itemlist.append( Item(channel=__channel__, title=scrapedtitle, url=urlparse.urljoin(host,url), action="findvideos", thumbnail=item.thumbnail, show=item.show) )
 
     ## Opción "Añadir esta serie a la biblioteca de XBMC"
     if (config.get_platform().startswith("xbmc") or config.get_platform().startswith("boxee")) and len(itemlist)>0:
@@ -124,39 +115,21 @@ def episodios(item):
 def findvideos(item):
     logger.info("pelisalacarta.playmax findvideos")
 
-    login()
-    sendHeader = [
-        ['Host','playmax.es'],
-        ['User-Agent','Mozilla/5.0 (Windows NT 6.1; WOW64; rv:34.0) Gecko/20100101 Firefox/34.0'],
-        ['Accept','text/html, */*; q=0.01'],
-        ['Accept-Language','es-ES,es;q=0.8,en-US;q=0.5,en;q=0.3'],
-        ['Accept-Encoding','gzip, deflate'],
-        ['Cookie',get_cookies()],
-        ['X-Requested-With','XMLHttpRequest'],
-        ['Referer',item.url],
-        ['Connection','keep-alive']
-    ]
+    if config.get_setting("playmaxaccount")=="true": login()
 
     itemlist = []
 
-    # Descarga la página
-    data = scrapertools.cache_page(item.url, headers=sendHeader)
-    data = re.sub(r"\n|\r|\t|\s{2}|&nbsp;|<br>","",data)
-    data = re.sub(r"<!--.*?-->","",data)
+    ## Descarga la página
+    data = scrapertools.cache_page(item.url)
+    ## Agrupa los datos
+    data = re.sub(r'\n|\r|\t|&nbsp;|<br>','',data)
+    data = re.sub(r'\s+',' ',data)
+    data = re.sub(r'<!--.*?-->','',data)
 
-    '''
-    <divdd class="capitulo">
-    <a href="./redirect.php?url=aHR0cDovL2FsbG15dmlkZW9zLm5ldC81bTBhYTBpZmM4ejE=&id=259" target="_blank">
-    <divd class="servidor"><img style="margin-top: 5px;" src="./styles/prosilver/imageset/allmyvideos.png"></divd>
-    <divd class="calidad">480p HD</divd>
-    <divd class="idioma">Castellano</divd>
-    <divd class="subtitulos">Sin subtítulos</divd>
-    <divd class="calidadaudio">...</divd>
-    </a>
-    '''
+    #<divdd class="capitulo" id="el500167"><a onclick="cvd('5126'); pulsed('500167')" href="./redirect.php?url=aHR0cDovL2FsbG15dmlkZW9zLm5ldC95ZTBmYzc3dXB6aXA=&id=281" target="_blank"><divd class="servidor"><img style="margin-top: 5px;" src="./styles/prosilver/imageset/allmyvideos.png"></divd><divd class="calidad">720p HD</divd><divd class="idioma">Inglés</divd><divd class="subtitulos">Sin subtítulos</divd><divd class="calidadaudio">Rip</divd></a><a href="./memberlist.php?mode=viewprofile&u=14204" target="_blank"><divd class="uploader">shara</divd></a><divd class="botonesenlaces"><divd><divd style="float: left;" id="linkmas500167"><divd class="positive_evaluation" onclick="valorar_noticia(500167, 1)"></divd></divd><divd style="float: left; color: #c21200;; text-align: center; width: 21px;" id="value_evaluation500167">-1</divd><divd style="float: left;" id="linkmenos500167"><divd onclick="valorar_noticia(500167, 2)" class="negative_evaluation"></divd></divd></divd></divd></divdd>
 
-    patron = '<divdd class="capitulo">'
-    patron+= '<a href="([^"]+)".*?'
+    patron = '<divdd class="capitulo" id="[^"]+">'
+    patron+= '<a onclick="[^"]+" href="([^"]+)".*?'
     patron+= 'src="([^"]+)"></divd>'
     patron+= '<divd class="calidad">([^<]+)</divd>'
     patron+= '<divd class="idioma">([^<]+)</divd>'
@@ -164,6 +137,10 @@ def findvideos(item):
     patron+= '<divd class="calidadaudio">([^<]+)</divd>'
 
     matches = re.compile(patron,re.DOTALL).findall(data)
+
+    if len(matches) == 0: 
+        itemlist.append( Item(channel=__channel__, title ="No hay enlaces", folder=False ) )
+        return itemlist
 
     for scrapedurl, scrapedthumbnail, calidad, idioma, subtitulos, calidadaudio in matches:
         servidor = scrapertools.get_match(scrapedthumbnail,'imageset/([^\.]+)\.')
@@ -175,9 +152,31 @@ def findvideos(item):
 def play(item):
     logger.info("pelisalacarta.channels.playmax play url="+item.url)
 
-    url = scrapertools.get_header_from_response(item.url, header_to_get="location", headers=sendHeader)
+    ## stopbot - url
+    url = scrapertools.get_header_from_response(item.url, header_to_get="location")
 
-    itemlist = servertools.find_video_items(data=url)
+    ## Descarga la página
+    data = scrapertools.cache_page(url)
+    ## Agrupa los datos
+    data = re.sub(r'\n|\r|\t|&nbsp;|<br>','',data)
+    data = re.sub(r'\s+',' ',data)
+    data = re.sub(r'<!--.*?-->','',data)
+
+    ## stopbot - POST tipo 1
+    #$.ajax({ type: "POST", url: "./bot.php", data: "key=qdWmuqaRhpbdxtrx5cK7lt%2FNb8+XvpvbvGXXvaSv5MnRmuA%3D%3D&id=6539&k=MXVUVzE5TFg3dExkMGclM0QlM0Q=&tipo=1",
+
+    ## stopbot - POST tipo 2
+    #$.ajax({ type: "POST", url: "./bot.php", data: "dc=" + m + "&key=qdWmuqaRhpbdxtrx5cK7lt%2FNb8+XvpvbvGXXvaSv5MnRmuA%3D%3D&id=6539&k=MXVUVzE5TFg3dExkMGclM0QlM0Q=&tipo=2",
+
+    tipo_1 = scrapertools.get_match(data,'data: "([^"]+)"')
+    tipo_1 = scrapertools.cache_page('http://stopbot.tk/bot.php',post=tipo_1)
+
+    tipo_2 = scrapertools.get_match(data,'data: "dc=" . m . "([^"]+)"')
+    tipo_2 = "dc="+tipo_1+tipo_2
+
+    data = scrapertools.cache_page('http://stopbot.tk/bot.php',post=tipo_2)
+
+    itemlist = servertools.find_video_items(data=data)
 
     for videoitem in itemlist:
         videoitem.title = item.title
@@ -185,30 +184,15 @@ def play(item):
 
     return itemlist
 
-def get_cookies():
-
-    login()
-
-    import cookielib
-
-    cookiesdat = os.path.join( config.get_setting("cookies.dir"), 'cookies.dat' )
-    cj = cookielib.MozillaCookieJar()
-    cj.load(cookiesdat,ignore_discard=True)
-
-    cookies = ""
-
-    for cookie in cj:
-         if "playmax_" in cookie.name:
-            cookies+= cookie.name+"="+cookie.value+"; "
-
-    return cookies
-
 def login():
+    logger.info("pelisalacarta.channels.playmax login")
 
     login_form = "ucp.php?mode=login"
-    data = scrapertools.cache_page(urlparse.urljoin(host,login_form), headers=sendHeader)
+    data = scrapertools.cache_page(urlparse.urljoin(host,login_form))
+
     patron = '<input type="hidden" name="sid" value="([^"]+)" />'
     sid = scrapertools.find_single_match(data,patron)
 
     post = "username="+config.get_setting('playmaxuser')+"&password="+config.get_setting('playmaxpassword')+"&sid="+sid+"&redirect=index.php&login=Identificarse&redirect=.%2Fucp.php%3Fmode%3Dlogin"
-    data = scrapertools.cache_page("http://playmax.es/ucp.php?mode=login",post=post, headers=sendHeader)
+
+    data = scrapertools.cache_page("http://playmax.es/ucp.php?mode=login",post=post)

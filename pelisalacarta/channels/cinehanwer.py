@@ -17,10 +17,11 @@ from servers import servertools
 
 DEBUG = config.get_setting("debug")
 
-__category__ = "A"
+__category__ = "F,S"
 __type__ = "generic"
-__title__ = "cinehanwer"
+__title__ = "Cinehanwer"
 __channel__ = "cinehanwer"
+__adult__ = "false"
 __language__ = "ES"
 __creationdate__ = "20140615"
 

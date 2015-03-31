@@ -14,6 +14,7 @@ from core.item import Item
 from servers import servertools
 
 __channel__ = "pelis24"
+__adult__ = "false"
 __category__ = "F,S"
 __type__ = "xbmc"
 __title__ = "Pelis24"

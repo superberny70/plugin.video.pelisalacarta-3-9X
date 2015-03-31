@@ -20,6 +20,7 @@ __category__ = "A,X"
 __type__ = "generic"
 __title__ = "Hentaiflv"
 __channel__ = "hentaiflv"
+__adult__ = "true"
 __language__ = "ES"
 __creationdate__ = "20140414"
 

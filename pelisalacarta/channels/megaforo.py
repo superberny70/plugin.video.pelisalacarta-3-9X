@@ -16,11 +16,12 @@ from core.item import Item
 from servers import servertools
 
 __channel__ = "megaforo"
-__category__ = "F"
+__category__ = "F,A,S,D,M"
 __type__ = "generic"
 __title__ = "Mega-foro"
 __language__ = "ES"
-__adult__ = "true"
+__adult__ = "false"
+__thumbnail__ = "http://s6.postimg.org/fjtfzgksx/megaforo.jpg"
 
 DEBUG = config.get_setting("debug")
 

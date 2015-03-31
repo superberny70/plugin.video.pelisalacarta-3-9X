@@ -16,6 +16,7 @@ from servers import servertools
 #from pelisalacarta import buscador
 
 __channel__ = "gaypornshare"
+__adult__ = "false"
 __category__ = "D"
 __type__ = "generic"
 __title__ = "gaypornshare"

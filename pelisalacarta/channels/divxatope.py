@@ -14,9 +14,10 @@ from core.item import Item
 from servers import servertools
 
 __channel__ = "divxatope"
-__category__ = "F,S,D"
+__adult__ = "false"
+__category__ = "F,S"
 __type__ = "generic"
-__title__ = "Mejor Torrent"
+__title__ = "DivxaTope"
 __language__ = "ES"
 
 DEBUG = config.get_setting("debug")

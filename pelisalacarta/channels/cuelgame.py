@@ -13,10 +13,12 @@ from core.item import Item
 from servers import servertools
 
 __channel__ = "cuelgame"
-__category__ = "F"
+__adult__ = "false"
+__category__ = "F,S,M,D,A"
 __type__ = "generic"
 __title__ = "Cuélgame"
 __language__ = "ES"
+__thumbnail__ = "http://s6.postimg.org/wa4tosj81/cuelgame.jpg"
 
 DEBUG = config.get_setting("debug")
 

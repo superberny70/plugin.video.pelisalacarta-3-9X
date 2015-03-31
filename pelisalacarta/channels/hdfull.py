@@ -13,11 +13,13 @@ from core import scrapertools
 from core.item import Item
 from servers import servertools
 
+__adult__= "false"
 __channel__ = "hdfull"
 __category__ = "F,S,D"
 __type__ = "generic"
 __title__ = "HDFull"
 __language__ = "ES"
+__thumbnail__ ="http://s6.postimg.org/eqgu6ues1/hdful.jpg" 
 
 DEBUG = config.get_setting("debug")
 
@@ -57,20 +59,53 @@ def menuseries(item):
 
 def search(item,texto):
     logger.info("pelisalacarta.channels.hdfull search")
-    if item.url=="":
-        item.url="http://www.divxatope.com/buscar/descargas"
-    item.extra = urllib.urlencode({'search':texto})
+
+    '''
+    <div class="search">
+    <form class="navbar-search pull-right" style="float:right;margin-right: 29px;" action="http://hdfull.tv/buscar" method="POST" >
+    <input type='hidden' #name='__csrf_magic' value="sid:2020a71c61ae1e4908641901e480af202b6aa335,1425327465" />
+    <input type="hidden" name="menu" value="search" />
+    <input type="text" class="search-query" placeholder="Buscar..." id="search-query" name="query" style="width:150px;" />
+    <div id="search-button-wrapper"><input id="search-button" value="" type="submit" /></div>
+    </form>
+    </div>
+    '''
+
+    item.url="http://hdfull.tv/"
+    data = scrapertools.cachePage(item.url)
+    texto = texto.replace('+','%20')
+    sid = scrapertools.get_match(data, '.__csrf_magic. value="(sid:[^"]+)"')
+    #post = urllib.urlencode({'__csrf_magic':sid,'menu':'search','query':texto})
+    post = urllib.urlencode({'__csrf_magic':sid})+'&menu=search&query='+texto
+
+    item.url="http://hdfull.tv/buscar"
+    data = scrapertools.cachePage(item.url,post=post)
+
+    s_p = scrapertools.get_match(data, '<h3 class="section-title">(.*?)<div id="footer-wrapper">').split('<h3 class="section-title">')
+
+    if len(s_p) == 1 and 'Lo sentimos</h3>' in s_p[0]:
+        return [ Item(channel=__channel__, title="[COLOR gold][B]HDFull:[/B][/COLOR] [COLOR blue]"+texto.replace('%20',' ')+"[/COLOR] sin resultados") ]
+    elif len(s_p) == 1:
+        if "/serie/" in s_p[0]:
+            s = s_p[0]
+        else:
+            p = s_p[0]
+    else:
+        s = s_p[0]
+        p = s_p[1]
+
+    itemlist = []
 
     try:
-        return lista(item)
-    # Se captura la excepci?n, para no interrumpir al buscador global si un canal falla
-    except:
-        import sys
-        for line in sys.exc_info():
-            logger.error( "%s" % line )
-        return []
+        itemlist+= series(item, data=s, serie_peli=" - [COLOR blue]Serie[/COLOR]")
+    except: pass
+    try:
+        itemlist+= peliculas(item, data=p, serie_peli=" - [COLOR blue]Pélicula[/COLOR]")
+    except: pass
 
-def peliculas(item):
+    return itemlist
+
+def peliculas(item, data="", serie_peli=""):
     logger.info("pelisalacarta.channels.hdfull peliculas")
     itemlist = []
 
@@ -96,7 +131,8 @@ def peliculas(item):
     patron += '<div class="rating-pod"[^<]+'
     patron += '<div class="left"(.*?)</div>'
 
-    data = scrapertools.cachePage(item.url)
+    if item.title != "Buscar...": data = scrapertools.cachePage(item.url)
+
     matches = re.compile(patron,re.DOTALL).findall(data)
     scrapertools.printMatches(matches)
 
@@ -104,12 +140,12 @@ def peliculas(item):
 
         thumbnail = scrapertools.find_single_match(scrapedthumbnail,"timthumb.php.src=([^\&]+)&")
         textoidiomas = extrae_idiomas(bloqueidiomas)
-        title = scrapedtitle.strip()+" ("+textoidiomas[:-1]+")"
+        title = scrapedtitle.strip()+" ("+textoidiomas[:-1]+")"+serie_peli
         url = urlparse.urljoin(item.url,scrapedurl)
         plot = ""
 
         if (DEBUG): logger.info("title=["+title+"], url=["+url+"], thumbnail=["+thumbnail+"]")
-        itemlist.append( Item(channel=__channel__, action="findvideos", title=title , fulltitle = title, url=url , thumbnail=thumbnail , plot=plot , folder=True, viewmode="movie"))
+        itemlist.append( Item(channel=__channel__, action="findvideos", title=title , fulltitle = title, url=url , thumbnail=thumbnail , plot=plot , extra="peliculas", folder=True, viewmode="movie", context="2"))
 
     next_page_url = scrapertools.find_single_match(data,'<a href="([^"]+)">.raquo;</a> ')
     if next_page_url!="":
@@ -128,7 +164,7 @@ def extrae_idiomas(bloqueidiomas):
     return textoidiomas
 
 
-def series(item):
+def series(item, data="", serie_peli=""):
     logger.info("pelisalacarta.channels.hdfull series")
     itemlist = []
 
@@ -162,21 +198,23 @@ def series(item):
     patron += '<img.*?src="([^"]+)".*?'
     patron += '<h5 class="left"[^<]+'
     patron += '<div class="title-overflow"></div[^<]+'
-    patron += '<a[^>]+>([^<]+)</a'
+    #patron += '<a[^>]+>([^<]+)</a'
+    patron += '<a class="[^"]+" href="[^"]+" title="([^"]+)"'
 
-    data = scrapertools.cachePage(item.url)
+    if item.title != "Buscar...": data = scrapertools.cachePage(item.url)
+
     matches = re.compile(patron,re.DOTALL).findall(data)
     scrapertools.printMatches(matches)
 
     for scrapedurl,scrapedthumbnail,scrapedtitle in matches:
 
         thumbnail = scrapertools.find_single_match(scrapedthumbnail,"timthumb.php.src=([^\&]+)&")
-        title = scrapedtitle.strip()
+        title = scrapedtitle.strip()+serie_peli
         url = urlparse.urljoin(item.url,scrapedurl)
         plot = ""
 
         if (DEBUG): logger.info("title=["+title+"], url=["+url+"], thumbnail=["+thumbnail+"]")
-        itemlist.append( Item(channel=__channel__, action="episodios", title=title , fulltitle = title, url=url , thumbnail=thumbnail , plot=plot , folder=True, show=title, viewmode="movie"))
+        itemlist.append( Item(channel=__channel__, action="episodios", title=title , fulltitle = title, url=url , thumbnail=thumbnail , plot=plot , folder=True, show=title, viewmode="movie", context="0"))
 
     next_page_url = scrapertools.find_single_match(data,'<a href="([^"]+)">.raquo;</a> ')
     if next_page_url!="":
@@ -480,7 +518,36 @@ def findvideos(item):
         if (DEBUG): logger.info("title=["+title+"], url=["+url+"], thumbnail=["+thumbnail+"]")
         itemlist.append(Item(channel=__channel__, action="play", title=title , fulltitle = title, url=url , thumbnail=thumbnail , plot=plot , fanart=fanart, folder=True, viewmode="movie_with_plot"))
 
+    if item.extra == "peliculas":
+        # STRM para todos los enlaces de servidores disponibles
+        # Si no existe el archivo STRM de la peícula muestra el item ">> Añadir a la biblioteca..."
+        try: itemlist.extend( file_cine_library(item) )
+        except: pass
+
     return itemlist
+
+def file_cine_library(item):
+    import os
+    from platformcode.xbmc import library
+    librarypath = os.path.join(config.get_library_path(),"CINE")
+    archivo = library.title_to_folder_name(item.title.strip())
+    strmfile = archivo+".strm"
+    strmfilepath = os.path.join(librarypath,strmfile)
+
+    if not os.path.exists(strmfilepath):
+        itemlist = []
+        itemlist.append( Item(channel=item.channel, title=">> Añadir a la biblioteca...", url=item.url, action="add_file_cine_library", extra="episodios", show=archivo) )
+
+    return itemlist
+
+def add_file_cine_library(item):
+    from platformcode.xbmc import library, xbmctools
+    library.savelibrary( titulo=item.show , url=item.url , thumbnail=item.thumbnail , server=item.server , plot=item.plot , canal=item.channel , category="Cine" , Serie="" , verbose=False, accion="play_from_library", pedirnombre=False, subtitle=item.subtitle )
+    itemlist = []
+    itemlist.append(Item(title='El vídeo '+item.show+' se ha añadido a la biblioteca'))
+    xbmctools.renderItems(itemlist, "", "", "")
+
+    return
 
 def play(item):
     logger.info("pelisalacarta.channels.hdfull play")

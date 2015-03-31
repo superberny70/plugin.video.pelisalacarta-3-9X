@@ -14,6 +14,14 @@ from core import logger
 from core.item import Item
 from servers import servertools
 
+__adult__= "false"
+__category__ = "F,S,D,A"
+__type__ = "generic"
+__title__ = "PorDescargaDirecta"
+__channel__ = "pordescargadirecta"
+__language__ = "ES"
+
+
 CHANNELNAME = "pordescargadirecta"
 DEBUG = True
 

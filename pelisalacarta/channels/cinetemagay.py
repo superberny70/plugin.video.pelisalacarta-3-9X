@@ -16,9 +16,10 @@ from servers import servertools
 #from pelisalacarta import buscador
 
 __channel__ = "cinetemagay"
-__category__ = "D"
+__adult__ = "true"
+__category__ = "X,F"
 __type__ = "generic"
-__title__ = "cinetemagay"
+__title__ = "Cine Tema Gay"
 __language__ = "ES"
 
 DEBUG = config.get_setting("debug")

@@ -14,6 +14,7 @@ from core.item import Item
 from servers import servertools
 
 __channel__ = "mejortorrent"
+__adult__ = "false"
 __category__ = "F,S,D"
 __type__ = "generic"
 __title__ = "Mejor Torrent"

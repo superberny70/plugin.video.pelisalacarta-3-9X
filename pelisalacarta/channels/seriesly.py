@@ -32,6 +32,7 @@ except:
 
 
 __channel__ = "seriesly"
+__adult__ = "false"
 __category__ = "F,S,A,D"
 __type__ = "generic"
 __title__ = "Series.ly"

@@ -15,6 +15,7 @@ from core.item import Item
 from servers import servertools
 
 __channel__ = "seriesyonkis"
+__adult__ = "false"
 __category__ = "S,A"
 __type__ = "generic"
 __title__ = "Seriesyonkis"

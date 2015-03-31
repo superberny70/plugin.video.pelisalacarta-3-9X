@@ -14,6 +14,7 @@ from core.item import Item
 from servers import servertools
 
 __channel__ = "filmsenzalimiti"
+__adult__ = "false"
 __category__ = "F"
 __type__ = "generic"
 __title__ = "Film Senza Limiti (IT)"

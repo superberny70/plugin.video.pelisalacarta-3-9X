@@ -20,6 +20,7 @@ __category__ = "A"
 __type__ = "generic"
 __title__ = "newpct1"
 __channel__ = "newpct1"
+__adult__ = "false"
 __language__ = "ES"
 __creationdate__ = "20141102"
 
