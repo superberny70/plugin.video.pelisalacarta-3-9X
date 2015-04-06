@@ -18,8 +18,9 @@ import urllib
 __channel__ = "submityourtapes"
 __category__ = "F"
 __type__ = "generic"
-__title__ = "submityourtapes"
+__title__ = "Submityourtapes"
 __language__ = "ES"
+__thumbnail__ = ""
 __adult__ = "true"
 
 DEBUG = config.get_setting("debug")

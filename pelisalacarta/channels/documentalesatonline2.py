@@ -20,7 +20,8 @@ __channel__ = "documentalesatonline2"
 __adult__ = "false"
 __category__ = "D"
 __type__ = "generic"
-__title__ = "La Guarida de bizzente"
+__title__ = "La Guarida de Bizzente"
+__thumbnail__ = ""
 __language__ = "ES"
 
 DEBUG = config.get_setting("debug")

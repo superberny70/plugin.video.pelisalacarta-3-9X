@@ -18,9 +18,10 @@ DEBUG = config.get_setting("debug")
 
 __category__ = "A,X"
 __type__ = "generic"
-__title__ = "Hentaiflv"
+__title__ = "HentaiFlv"
 __channel__ = "hentaiflv"
 __adult__ = "true"
+__thumbnail__ = ""
 __language__ = "ES"
 __creationdate__ = "20140414"
 

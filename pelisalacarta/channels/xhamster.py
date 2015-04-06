@@ -21,6 +21,7 @@ __category__ = "F"
 __type__ = "generic"
 __title__ = "xHamster"
 __language__ = "ES"
+__thumbnail__ = ""
 __adult__ = "true"
 
 DEBUG = config.get_setting("debug")

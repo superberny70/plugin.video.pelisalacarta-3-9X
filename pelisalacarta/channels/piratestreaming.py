@@ -17,7 +17,8 @@ __channel__ = "piratestreaming"
 __adult__ = "false"
 __category__ = "F"
 __type__ = "generic"
-__title__ = "piratestreaming"
+__title__ = "Piratestreaming"
+__thumbnail__ = ""
 __language__ = "IT"
 
 DEBUG = config.get_setting("debug")

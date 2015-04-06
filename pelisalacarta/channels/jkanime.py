@@ -21,6 +21,7 @@ __type__ = "generic"
 __title__ = "JKanime"
 __channel__ = "jkanime"
 __adult__ = "false"
+__thumbnail__ = ""
 __language__ = "ES"
 __creationdate__ = "20121015"
 

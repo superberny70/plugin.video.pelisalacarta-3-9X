@@ -21,6 +21,7 @@ __adult__ = "false"
 __category__ = "D"
 __type__ = "generic"
 __title__ = "Teledocumentales"
+__thumbnail__ = ""
 __language__ = "ES"
 __creationdate__ = "20111019"
 

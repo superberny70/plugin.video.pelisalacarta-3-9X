@@ -21,6 +21,7 @@ __type__ = "generic"
 __title__ = "Peliculamos"
 __channel__ = "peliculamos"
 __adult__ = "false"
+__thumbnail__ = ""
 __language__ = "ES"
 __creationdate__ = "20121105"
 

@@ -14,11 +14,12 @@ from core import logger
 from core.item import Item
 from servers import servertools
 
-__adult__= "false"
+__adult__ = "false"
 __category__ = "F,S,D,A"
 __type__ = "generic"
-__title__ = "PorDescargaDirecta"
+__title__ = "Por Descarga Directa"
 __channel__ = "pordescargadirecta"
+__thumbnail__ = ""
 __language__ = "ES"
 
 

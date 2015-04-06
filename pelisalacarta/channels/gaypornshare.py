@@ -19,7 +19,8 @@ __channel__ = "gaypornshare"
 __adult__ = "false"
 __category__ = "D"
 __type__ = "generic"
-__title__ = "gaypornshare"
+__title__ = "Gay Porn Share"
+__thumbnail__ = ""
 __language__ = "ES"
 
 DEBUG = config.get_setting("debug")

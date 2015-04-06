@@ -18,7 +18,8 @@ __channel__ = "seriesdanko"
 __adult__ = "false"
 __category__ = "S"
 __type__ = "generic"
-__title__ = "Seriesdanko"
+__title__ = "SeriesDanko"
+__thumbnail__ = ""
 __language__ = "ES"
 
 DEBUG = config.get_setting("debug")

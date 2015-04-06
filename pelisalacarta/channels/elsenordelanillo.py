@@ -22,6 +22,7 @@ __type__ = "generic"
 __title__ = "El Señor del Anillo"
 __channel__ = "elsenordelanillo"
 __adult__ = "false"
+__thumbnail__ = ""
 __language__ = "ES"
 __creationdate__ = "20140615"
 

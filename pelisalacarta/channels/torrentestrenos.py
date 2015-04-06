@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# -*- coding: iso-8859-1 -*-
 #------------------------------------------------------------
 # pelisalacarta - XBMC Plugin
 # Canal para pordede
@@ -15,7 +15,7 @@ from core.item import Item
 from servers import servertools
 
 __category__ = "F,S,D"
-__adult__= "false"
+__adult__ = "false"
 __type__ = "generic"
 __title__ = "Torrentestrenos"
 __channel__ = "torrentestrenos"

@@ -20,6 +20,7 @@ __adult__ = "true"
 __category__ = "X,F"
 __type__ = "generic"
 __title__ = "Cine Tema Gay"
+__thumbnail__ = ""
 __language__ = "ES"
 
 DEBUG = config.get_setting("debug")

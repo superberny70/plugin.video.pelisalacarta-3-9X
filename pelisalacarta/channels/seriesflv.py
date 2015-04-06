@@ -19,9 +19,10 @@ DEBUG = config.get_setting("debug")
 
 __category__ = "S"
 __type__ = "generic"
-__title__ = "seriesflv"
+__title__ = "SeriesFlv"
 __channel__ = "seriesflv"
 __adult__ = "false"
+__thumbnail__ = ""
 __language__ = "ES"
 __creationdate__ = "20140615"
 

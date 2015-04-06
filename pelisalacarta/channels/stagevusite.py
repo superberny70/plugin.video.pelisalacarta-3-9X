@@ -26,6 +26,7 @@ __adult__ = "false"
 __category__ = "G"
 __type__ = "xbmc"
 __title__ = "Stagevu"
+__thumbnail__ = ""
 __language__ = ""
 
 DEBUG = config.get_setting("debug")

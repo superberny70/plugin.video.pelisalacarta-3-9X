@@ -15,7 +15,7 @@ from core.item import Item
 from servers import servertools
 
 DEBUG = config.get_setting("debug")
-__adult__= "false"
+__adult__ = "false"
 __category__ = "F,S"
 __type__ = "generic"
 __title__ = "Peliserie"
@@ -28,7 +28,7 @@ __url_base__="http://www.peliserie.com"
 def isGeneric():
     return True
 
-def login():# no funciona
+def login2():# no funciona
     url= 'http://www.peliserie.com/query/login.php'
     post = "username="+config.get_setting("peliserieuser")+"&password="+config.get_setting("peliseriepassword")
     
@@ -41,6 +41,23 @@ def login():# no funciona
     data = scrapertools.cache_page('http://www.peliserie.com')
     logger.info("[peliserie.py] login: " + data)
     
+def login():
+    url= __url_base__ + '/query/login.php'
+
+    ## con path
+    #params = "path=%2F&username="+config.get_setting("peliserieuser")+"&password="+config.get_setting("peliseriepassword")
+    ## Normal
+    #params = "username="+config.get_setting("peliserieuser")+"&password="+config.get_setting("peliseriepassword")
+    params = "username="+config.get_setting("seriesmuuser")+"&password="+config.get_setting("seriesmupassword")
+    ## GET
+    #data = scrapertools.cache_page( url + '?' + params )
+
+    ## POST
+    data = scrapertools.cache_page( url , post=params )
+
+    ## Retorna true o false
+    return scrapertools.get_match( data, '"type":([^,]+),' )
+    
 def mainlist(item):
     logger.info("[peliserie.py] mainlist")
         
@@ -52,7 +69,7 @@ def mainlist(item):
     itemlist.append( Item(channel=__channel__, action="search", title="Buscar") )
     
     #itemlist.append( Item(channel=__channel__, action="tmdb", title="TMDB") )
-    #login()
+    logger.info("[peliserie.py] login: "+ str(login()))
     
     return itemlist
 

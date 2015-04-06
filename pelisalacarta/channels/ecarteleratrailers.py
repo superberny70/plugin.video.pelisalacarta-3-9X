@@ -21,6 +21,7 @@ __adult__ = "false"
 __category__ = "F"
 __type__ = "generic"
 __title__ = "Trailers ecartelera"
+__thumbnail__ = ""
 __language__ = "ES,EN"
 
 def isGeneric():

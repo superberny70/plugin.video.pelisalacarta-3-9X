@@ -28,6 +28,7 @@ __adult__ = "false"
 __category__ = "M"
 __type__ = "xbmc"
 __title__ = "Sonolatino"
+__thumbnail__ = ""
 __language__ = ""
 
 DEBUG = config.get_setting("debug")

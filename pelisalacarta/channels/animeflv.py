@@ -21,6 +21,7 @@ __type__ = "generic"
 __title__ = "Animeflv"
 __channel__ = "animeflv"
 __adult__ = "false"
+__thumbnail__ = ""
 __language__ = "ES"
 __creationdate__ = "20111014"
 

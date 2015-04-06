@@ -18,7 +18,8 @@ __channel__ = "tubehentai"
 __adult__ = "false"
 __category__ = "A"
 __type__ = "generic"
-__title__ = "tubehentai"
+__title__ = "Tubehentai"
+__thumbnail__ = ""
 __language__ = "ES"
 
 DEBUG = config.get_setting("debug")

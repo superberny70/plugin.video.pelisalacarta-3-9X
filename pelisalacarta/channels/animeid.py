@@ -20,6 +20,7 @@ __type__ = "generic"
 __title__ = "Animeid"
 __channel__ = "animeid"
 __adult__ = "false"
+__thumbnail__ = ""
 __language__ = "ES"
 
 def isGeneric():

@@ -16,7 +16,7 @@ from core.item import Item
 from servers import servertools
 
 __category__ = "F,S"
-__adult__= "false"
+__adult__ = "false"
 __type__ = "generic"
 __title__ = "Txibitsoft"
 __channel__ = "txibitsoft"

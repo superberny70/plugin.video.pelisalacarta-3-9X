@@ -18,7 +18,7 @@ __category__ = "F,S"
 __type__ = "generic"
 __title__ = "Zentorrents"
 __language__ = "ES"
-__adult__= "false"
+__adult__ = "false"
 __thumbnail__ = "http://s6.postimg.org/9zv90yjip/zentorrentlogo.jpg"
 
 DEBUG = config.get_setting("debug")

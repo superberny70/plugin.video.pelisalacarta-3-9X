@@ -17,8 +17,9 @@ from servers import servertools
 __channel__ = "mocosoftx"
 __category__ = "F"
 __type__ = "generic"
-__title__ = "MocosoftX"
+__title__ = "MocosofTX"
 __language__ = "ES"
+__thumbnail__ = ""
 __adult__ = "true"
 
 DEBUG = config.get_setting("debug")

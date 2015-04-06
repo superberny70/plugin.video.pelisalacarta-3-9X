@@ -19,6 +19,7 @@ __adult__ = "false"
 __category__ = "F"
 __type__ = "generic"
 __title__ = "NewHD"
+__thumbnail__ = ""
 __language__ = "ES"
 __creationdate__ = "20110505"
 

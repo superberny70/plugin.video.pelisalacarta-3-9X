@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# -*- coding: iso-8859-1 -*-
 #------------------------------------------------------------
 # pelisalacarta - XBMC Plugin
 # Canal para buscar en tu.tv
@@ -18,7 +18,8 @@ __channel__ = "tutvsite"
 __adult__ = "false"
 __category__ = "G"
 __type__ = "generic"
-__title__ = "tu.tv"
+__title__ = "Tu.tv"
+__thumbnail__ = ""
 __language__ = "ES"
 
 DEBUG = config.get_setting("debug")

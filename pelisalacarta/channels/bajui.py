@@ -13,12 +13,18 @@ from core import scrapertools
 from core.item import Item
 from servers import servertools
 
-__channel__ = "bajui"
+__channel__ = "bajui"
+
 __adult__ = "false"
-__category__ = "F,S,D"
-__type__ = "generic"
-__title__ = "Bajui"
-__language__ = "ES"
+__category__ = "F,S,D"
+
+__type__ = "generic"
+
+__title__ = "Bajui"
+
+__thumbnail__ = ""
+__language__ = "ES"
+
 
 DEBUG = config.get_setting("debug")
 

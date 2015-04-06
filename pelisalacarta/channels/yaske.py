@@ -17,7 +17,8 @@ __channel__ = "yaske"
 __adult__ = "false"
 __category__ = "F"
 __type__ = "generic"
-__title__ = "yaske.net"
+__title__ = "Yaske.net"
+__thumbnail__ = ""
 __language__ = "ES"
 
 DEBUG = config.get_setting("debug")

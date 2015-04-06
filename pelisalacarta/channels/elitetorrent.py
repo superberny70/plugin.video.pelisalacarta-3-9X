@@ -17,9 +17,9 @@ __channel__ = "elitetorrent"
 __adult__ = "false"
 __category__ = "F,S,D"
 __type__ = "generic"
-__title__ = "Elite Torrent"
+__title__ = "EliteTorrent"
 __language__ = "ES"
-__thumbnail__ = "http://s6.postimg.org/n4wguxftd/elitetorrent.jpg" 
+__thumbnail__ = "http://s6.postimg.org/n4wguxftd/elitetorrent.jpg"
 
 DEBUG = config.get_setting("debug")
 BASE_URL = 'http://www.elitetorrent.net'

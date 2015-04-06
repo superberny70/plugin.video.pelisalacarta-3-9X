@@ -18,9 +18,10 @@ DEBUG = config.get_setting("debug")
 
 __category__ = "A"
 __type__ = "generic"
-__title__ = "Quiero dibujos animados"
+__title__ = "Quiero Dibujos Animados"
 __channel__ = "quierodibujosanimados"
 __adult__ = "false"
+__thumbnail__ = ""
 __language__ = "ES"
 __creationdate__ = "20121112"
 

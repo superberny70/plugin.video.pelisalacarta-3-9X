@@ -16,7 +16,8 @@ __channel__ = "tumejortv"
 __adult__ = "false"
 __category__ = "F,S"
 __type__ = "generic"
-__title__ = "tumejortv.com"
+__title__ = "Tumejortv.com"
+__thumbnail__ = ""
 __language__ = "ES"
 
 DEBUG = config.get_setting("debug")

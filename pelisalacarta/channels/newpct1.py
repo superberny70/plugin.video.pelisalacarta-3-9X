@@ -18,9 +18,10 @@ DEBUG = config.get_setting("debug")
 
 __category__ = "A"
 __type__ = "generic"
-__title__ = "newpct1"
+__title__ = "Newpct1"
 __channel__ = "newpct1"
 __adult__ = "false"
+__thumbnail__ = ""
 __language__ = "ES"
 __creationdate__ = "20141102"
 

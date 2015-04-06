@@ -17,7 +17,8 @@ __channel__ = "italiafilm"
 __adult__ = "false"
 __category__ = "F,S,A"
 __type__ = "generic"
-__title__ = "Italia film (IT)"
+__title__ = "Italiafilm (IT)"
+__thumbnail__ = ""
 __language__ = "IT"
 
 DEBUG = True #config.get_setting("debug")

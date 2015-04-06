@@ -19,7 +19,8 @@ __channel__ = "discoverymx"
 __adult__ = "false"
 __category__ = "D"
 __type__ = "generic"
-__title__ = "Discoverymx"
+__title__ = "DiscoveryMx"
+__thumbnail__ = ""
 __language__ = "ES"
 
 DEBUG = config.get_setting("debug")

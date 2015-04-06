@@ -17,7 +17,8 @@ __channel__ = "filmpertutti"
 __adult__ = "false"
 __category__ = "F"
 __type__ = "generic"
-__title__ = "filmpertutti"
+__title__ = "Filmpertutti"
+__thumbnail__ = ""
 __language__ = "IT"
 
 DEBUG = config.get_setting("debug")

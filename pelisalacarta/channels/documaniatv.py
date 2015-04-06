@@ -17,7 +17,8 @@ __channel__ = "documaniatv"
 __adult__ = "false"
 __category__ = "D"
 __type__ = "generic"
-__title__ = "DocumaniaTV"
+__title__ = "Documania TV"
+__thumbnail__ = ""
 __language__ = "ES"
 
 DEBUG = config.get_setting("debug")

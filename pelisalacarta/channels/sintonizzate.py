@@ -18,7 +18,7 @@ __category__ = "F"
 __type__ = "generic"
 __title__ = "Sintonizzate.me"
 __language__ = "ES"
-__thumbnail__ = "http://s6.postimg.org/4zsp8cv2p/sintonizzate.jpg" 
+__thumbnail__ = "http://s6.postimg.org/4zsp8cv2p/sintonizzate.jpg"
 
 DEBUG = config.get_setting("debug")
 

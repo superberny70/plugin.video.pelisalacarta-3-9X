@@ -19,7 +19,7 @@ __category__ = "F,S,D"
 __type__ = "generic"
 __title__ = "SeriesMU"
 __language__ = "ES"
-__thumbnail__ = "http://s17.postimg.org/jcasctj0v/smlogo.jpg"  
+__thumbnail__ = "http://s17.postimg.org/jcasctj0v/smlogo.jpg"
 __adult__ = "false"
 
 DEBUG = config.get_setting("debug")

@@ -18,12 +18,12 @@ DEBUG = config.get_setting("debug")
 
 __category__ = "A"
 __type__ = "generic"
-__title__ = "Reyanime"
+__title__ = "ReyAnime"
 __channel__ = "reyanime"
 __adult__ = "false"
 __language__ = "ES"
 __creationdate__ = "20141228"
-__thumbnail__ = "http://s6.postimg.org/h974l9pw1/reyanime.jpg" 
+__thumbnail__ = "http://s6.postimg.org/h974l9pw1/reyanime.jpg"
 
 ANIMEFLV_REQUEST_HEADERS = []
 ANIMEFLV_REQUEST_HEADERS.append(["User-Agent","Mozilla/5.0 (Macintosh; Intel Mac OS X 10.8; rv:22.0) Gecko/20100101 Firefox/22.0"])

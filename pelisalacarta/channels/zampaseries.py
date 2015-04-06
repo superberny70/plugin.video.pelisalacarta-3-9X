@@ -22,6 +22,7 @@ __type__ = "generic"
 __title__ = "Zampaseries"
 __channel__ = "zampaseries"
 __adult__ = "false"
+__thumbnail__ = ""
 __language__ = "ES"
 __creationdate__ = "20140615"
 

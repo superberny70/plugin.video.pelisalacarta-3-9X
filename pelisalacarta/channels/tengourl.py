@@ -19,6 +19,7 @@ __channel__ = "tengourl"
 __category__ = "G"
 __type__ = "generic"
 __title__ = ""
+__thumbnail__ = ""
 __language__ = ""
 
 DEBUG = config.get_setting("debug")

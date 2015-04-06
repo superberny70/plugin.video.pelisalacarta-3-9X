@@ -17,7 +17,8 @@ __channel__ = "oranline"
 __adult__ = "false"
 __category__ = "F"
 __type__ = "generic"
-__title__ = "oranline"
+__title__ = "Oranline"
+__thumbnail__ = ""
 __language__ = "ES"
 
 DEBUG = config.get_setting("debug")

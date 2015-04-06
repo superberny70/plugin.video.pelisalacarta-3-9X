@@ -17,7 +17,7 @@ __channel__ = "serietvsubita"
 __adult__ = "false"
 __category__ = "F,S,D"
 __type__ = "generic"
-__title__ = "Serie TV Sub ITA"
+__title__ = "SerieTVSubITA"
 __language__ = "IT"
 __thumbnail__ = "http://s6.postimg.org/5qlfe4xg1/serietvsubita.jpg"
 

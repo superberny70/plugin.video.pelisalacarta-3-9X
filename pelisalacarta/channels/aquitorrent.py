@@ -18,7 +18,7 @@ __category__ = "F"
 __type__ = "generic"
 __title__ = "Aquitorrent"
 __language__ = "ES"
-__thumbnail__ = "http://s6.postimg.org/47c93xmq9/aquitorrent.jpg"  
+__thumbnail__ = "http://s6.postimg.org/47c93xmq9/aquitorrent.jpg"
 
 host = "http://www.aquitorrent.com/"
 

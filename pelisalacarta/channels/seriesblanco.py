@@ -15,7 +15,7 @@ from servers import servertools
 __channel__ = "seriesblanco"
 __category__ = "F"
 __type__ = "generic"
-__title__ = "Series Blanco"
+__title__ = "SeriesBlanco"
 __language__ = "ES"
 __thumbnail__ = "http://s6.postimg.org/j2a19lb2p/seriesblanco.jpg"
 __adult__ = "false"

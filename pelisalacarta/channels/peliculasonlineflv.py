@@ -17,7 +17,8 @@ __channel__ = "peliculasonlineflv"
 __adult__ = "false"
 __category__ = "F,D"
 __type__ = "generic"
-__title__ = "Peliculas Online FLV"
+__title__ = "PeliculasOnline FLV"
+__thumbnail__ = ""
 __language__ = "ES"
 
 DEBUG = config.get_setting("debug")

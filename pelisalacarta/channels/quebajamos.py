@@ -16,14 +16,14 @@ from core.item import Item
 from servers import servertools
 
 DEBUG = config.get_setting("debug")
-__adult__= "true"
+__adult__ = "true"
 __category__ = "A"
 __type__ = "generic"
 __title__ = "Quebajamos"
 __channel__ = "quebajamos"
 __language__ = "ES"
 __creationdate__ = "20140615"
-__thumbnail__ =  "http://s6.postimg.org/j8nqcok7l/quebajmos.jpg"
+__thumbnail__ = "http://s6.postimg.org/j8nqcok7l/quebajmos.jpg"
 
 DEFAULT_HEADERS = []
 DEFAULT_HEADERS.append( ["User-Agent","Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.6; es-ES; rv:1.9.2.12) Gecko/20101026 Firefox/3.6.12"] )

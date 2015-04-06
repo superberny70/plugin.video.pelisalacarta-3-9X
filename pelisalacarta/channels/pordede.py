@@ -22,6 +22,7 @@ __type__ = "generic"
 __title__ = "Pordede"
 __channel__ = "pordede"
 __adult__ = "false"
+__thumbnail__ = ""
 __language__ = "ES"
 __creationdate__ = "20140615"
 

@@ -16,8 +16,9 @@ from servers import servertools
 __channel__ = "peliculaseroticas"
 __category__ = "F"
 __type__ = "generic"
-__title__ = "PeliculasEroticas"
+__title__ = "Peliculas Eroticas"
 __language__ = "ES"
+__thumbnail__ = ""
 __adult__ = "true"
 
 from xml.dom import minidom

@@ -18,6 +18,7 @@ __adult__ = "false"
 __category__ = "F,S"
 __type__ = "generic"
 __title__ = "Unsoloclic.info"
+__thumbnail__ = ""
 __language__ = "ES"
 __creationdate__ = "20120703"
 

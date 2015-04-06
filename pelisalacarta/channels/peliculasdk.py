@@ -17,10 +17,10 @@ from servers import servertools
 __channel__ = "peliculasdk"
 __category__ = "F"
 __type__ = "generic"
-__title__ = "PeliculasDK"
+__title__ = "Peliculas DK"
 __language__ = "ES"
 __adult__ = "false"
-__thumbnail__ = "http://s6.postimg.org/47c93xmq9/aquitorrent.jpg"  
+__thumbnail__ = "https://fbcdn-profile-a.akamaihd.net/hprofile-ak-ash2/v/t1.0-1/1383506_640793329305673_1060019127_n.png?oh=f05dec9d3fb1a5b0196b81f555244ae4&oe=559BC643&__gda__=1436845862_3a9b62af054e2187eb789d9aa09abcdc"
 
 DEBUG = config.get_setting("debug")
 

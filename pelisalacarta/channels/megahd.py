@@ -17,7 +17,7 @@ from servers import servertools
 __channel__ = "megahd"
 __category__ = "F,S,D,A"
 __type__ = "generic"
-__title__ = "Megahd"
+__title__ = "MegaHd"
 __language__ = "ES"
 __adult__ = "false"
 __thumbnail__ = "http://s6.postimg.org/9ud7f5emp/megahd.jpg"

@@ -20,9 +20,10 @@ __category__ = "F"
 __type__ = "generic"
 __title__ = "PlayMax"
 __channel__ = "playmax"
+__adult__ = ""
 __language__ = "ES"
 __creationdate__ = "20141217"
-__thumbnail__ = "http://s6.postimg.org/lkvqa9wsx/playmax.jpg" 
+__thumbnail__ = "http://s6.postimg.org/lkvqa9wsx/playmax.jpg"
 
 host = "http://playmax.es/"
 

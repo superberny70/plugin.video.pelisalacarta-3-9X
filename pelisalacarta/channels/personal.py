@@ -20,6 +20,7 @@ __category__ = "A"
 __type__ = "generic"
 __title__ = ""
 __channel__ = "personal"
+__thumbnail__ = ""
 __language__ = "ES"
 __creationdate__ = "20121022"
 

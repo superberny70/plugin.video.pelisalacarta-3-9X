@@ -13,12 +13,18 @@ from core import scrapertools
 from core.item import Item
 from servers import servertools
 
-__channel__ = "enlacia"
+__channel__ = "enlacia"
+
 __adult__ = "false"
-__category__ = "F,S,D"
-__type__ = "generic"
-__title__ = "enlacia"
-__language__ = "ES"
+__category__ = "F,S,D"
+
+__type__ = "generic"
+
+__title__ = "Enlacia"
+
+__thumbnail__ = ""
+__language__ = "ES"
+
 
 DEBUG = config.get_setting("debug")
 

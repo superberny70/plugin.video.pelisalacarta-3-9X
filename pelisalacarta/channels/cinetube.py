@@ -13,12 +13,18 @@ from core import scrapertools
 from core.item import Item
 from servers import servertools
 
-__channel__ = "cinetube"
+__channel__ = "cinetube"
+
 __adult__ = "false"
-__category__ = "F,S,A,D"
-__type__ = "generic"
-__title__ = "Cinetube"
-__language__ = "ES"
+__category__ = "F,S,A,D"
+
+__type__ = "generic"
+
+__title__ = "Cinetube"
+
+__thumbnail__ = ""
+__language__ = "ES"
+
 
 #DEBUG = config.get_setting("debug")
 DEBUG = False

@@ -13,13 +13,13 @@ from core import scrapertools
 from core.item import Item
 from servers import servertools
 
-__adult__= "false"
+__adult__ = "false"
 __channel__ = "hdfull"
 __category__ = "F,S,D"
 __type__ = "generic"
 __title__ = "HDFull"
 __language__ = "ES"
-__thumbnail__ ="http://s6.postimg.org/eqgu6ues1/hdful.jpg" 
+__thumbnail__ = "http://s6.postimg.org/eqgu6ues1/hdful.jpg"
 
 DEBUG = config.get_setting("debug")
 
