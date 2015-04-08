@@ -15,12 +15,10 @@ from core.item import Item
 from servers import servertools
 
 __channel__ = "sinluces"
-__adult__ = "false"
-__category__ = "F,D"
+__category__ = "F,S,D"
 __type__ = "generic"
 __title__ = "Sinluces"
 __language__ = "ES"
-__thumbnail__ = "http://s14.postimg.org/cszkmr7a9/sinluceslogo.jpg"
 
 DEBUG = config.get_setting("debug")
 
