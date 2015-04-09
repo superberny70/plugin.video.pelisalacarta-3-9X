@@ -54,6 +54,8 @@ def EjecutarFuncion(item):
             dialog.ok(u'Atención',u'Esta es una versión no oficial de pelisalacarta de uso exclusivo para desarrolladores.',
                 u'Puede descargar la versión oficial en http://blog.tvalacarta.info/plugin-xbmc/pelisalacarta/')
             
+            config.set_setting('enableadultmode','false')
+            
             if config.get_setting("updatecheck2")=="true": 
                 itemlist.extend(ActualizarPlugin())
             if config.get_setting("updatechannels")=="true" and len(itemlist)==0: # Si hay una nueva version del plugin no actualizar canales
@@ -235,7 +237,26 @@ def ActualizarServers(Texto="Servidores actualizados con exíto"):
           logger.error( "%s" % line )
   return itemlist
 
+#Sección encargada de modificar la contraseña para adultos
+def modificar_password(item):
 
+    #Introducir password actual
+    ret= xbmcgui.Dialog().input(u'Contraseña actual',type=xbmcgui.INPUT_ALPHANUM, option=xbmcgui.ALPHANUM_HIDE_INPUT)
+    if ret == config.get_setting('adultpassword_guardada'): 
+        #Preguntar nuevo password
+            ret= xbmcgui.Dialog().input(u'Nueva contraseña',type=xbmcgui.INPUT_ALPHANUM, option=xbmcgui.ALPHANUM_HIDE_INPUT)
+        #Confirmar nuevo password
+            if ret == xbmcgui.Dialog().input('Confirmar contraseña',type=xbmcgui.INPUT_ALPHANUM, option=xbmcgui.ALPHANUM_HIDE_INPUT):
+                config.set_setting('adultpassword_guardada',ret)
+                config.set_setting('adultpassword_introducida',ret)
+                xbmcgui.Dialog().ok(u'Atención', u'La contraseña se ha actualizado correctamente.')
+                return None
+    
+    xbmcgui.Dialog().ok(u'Error', u'Se ha producido un error al intentar modificar su contraseña')
+    
+  
+  
+  
 #Seccion encargada de añadir un Item al Listitem:----------->OK
 def AddItem(item, totalitems):
     titulo = item.title
