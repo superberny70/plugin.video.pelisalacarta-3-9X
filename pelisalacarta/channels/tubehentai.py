@@ -15,7 +15,7 @@ from core.item import Item
 from servers import servertools
 
 __channel__ = "tubehentai"
-__adult__ = "false"
+__adult__ = "true"
 __category__ = "A"
 __type__ = "generic"
 __title__ = "Tubehentai"
