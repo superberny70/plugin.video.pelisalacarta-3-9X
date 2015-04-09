@@ -43,10 +43,9 @@ def open_settings():
 
 def get_setting(name):
     if name == "enableadultmode": #control parental
-        print "########################################### " +  str(__settings__.getSetting( 'adultpassword_introducida') == __settings__.getSetting( 'adultpassword_guardada')).lower()
-        return str(__settings__.getSetting( 'adultpassword_introducida') == __settings__.getSetting( 'adultpassword_guardada')).lower()
-    
-    dev = __settings__.getSetting( name )
+         dev = str(__settings__.getSetting( 'adultpassword_introducida') == __settings__.getSetting( 'adultpassword_guardada')).lower()
+    else:
+        dev = __settings__.getSetting( name )
     
     return dev
 
