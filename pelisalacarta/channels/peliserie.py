@@ -27,12 +27,32 @@ __url_base__="http://www.peliserie.com"
 
 def isGeneric():
     return True
-   
+
+def login2():# no funciona
+    url= 'http://www.peliserie.com/query/login.php'
+    post = "username="+config.get_setting("peliserieuser")+"&password="+config.get_setting("peliseriepassword")
+    
+    headers=[]
+    USER_AGENT="Mozilla/5.0 (Macintosh; Intel Mac OS X 10.8; rv:20.0) Gecko/20100101 Firefox/20.0"
+    headers.append(["User-Agent",USER_AGENT])
+    headers.append(["Referer",url])
+    data = scrapertools.cache_page( url , post=post, headers=headers )
+    
+    data = scrapertools.cache_page('http://www.peliserie.com')
+    logger.info("[peliserie.py] login: " + data)
+    
 def login():
     url= __url_base__ + '/query/login.php'
 
+    ## con path
+    #params = "path=%2F&username="+config.get_setting("peliserieuser")+"&password="+config.get_setting("peliseriepassword")
+    ## Normal
     #params = "username="+config.get_setting("peliserieuser")+"&password="+config.get_setting("peliseriepassword")
     params = "username="+config.get_setting("seriesmuuser")+"&password="+config.get_setting("seriesmupassword")
+    ## GET
+    #data = scrapertools.cache_page( url + '?' + params )
+
+    ## POST
     data = scrapertools.cache_page( url , post=params )
 
     ## Retorna true o false
@@ -44,10 +64,9 @@ def mainlist(item):
     itemlist = []
     itemlist.append( Item(channel=__channel__, action="listado", title="Películas", url=__url_base__+'/movies', extra="peliculas") )
     itemlist.append( Item(channel=__channel__, action="submenu", title="Filtrar películas por género y década", url=__url_base__+'/movies', extra="peliculas") )
-    itemlist.append( Item(channel=__channel__, action="search", title="Buscar Películas", extra="peliculas") )
     itemlist.append( Item(channel=__channel__, action="listado", title="Series", url=__url_base__+'/series', extra="series") )
     itemlist.append( Item(channel=__channel__, action="submenu", title="Filtrar series por género y década", url=__url_base__+'/series', extra="series") )
-    itemlist.append( Item(channel=__channel__, action="search", title="Buscar Series", extra="series") )
+    itemlist.append( Item(channel=__channel__, action="search", title="Buscar") )
     
     #itemlist.append( Item(channel=__channel__, action="tmdb", title="TMDB") )
     logger.info("[peliserie.py] login: "+ str(login()))
@@ -57,35 +76,14 @@ def mainlist(item):
 def search(item,texto):
     logger.info("[peliserie.py] search:" + texto)
     itemlist = []
-        
-    item.url = __url_base__ + "/search?q=" + texto
-    data = re.sub(r"\n|\r|\t|\s{2}|(<!--.*?-->)","",scrapertools.cache_page(item.url))
-    patron = '<div class="peliculas">(.*?)<footer>'
     
-    try:
-        fichas = scrapertools.get_match(data,patron)
-    except:
-        return itemlist # Devolvemos lista vacia
-        
-    patron = '<a href="([^"]+)".*?' #url 
-    patron += 'title="([^"]+).*?' #titulo
-    patron += 'data-label=".*?(\d{4})".*?' #año
-    patron += '<img src="([^"]+)">.*?</li>' #thumbnail
-    matches = re.compile(patron,re.DOTALL).findall(fichas)
+    item.url = __url_base__ + "/search?q=" + texto + '&type=movies'
+    item.extra="peliculas"
+    itemlist = listado(item)
     
-    for url, title, year, thumbnail in matches:
-        if url.startswith('/serie/'):
-            action = 'getTemporadas'
-            item.extra='series'
-        else:
-            action = "findvideos"
-            item.extra='peliculas'
-            
-        url=__url_base__ + url
-        show = title
-        itemlist.append( Item(channel=__channel__, action=action, title=title, url=url, thumbnail=__url_base__ +thumbnail, extra=item.extra,  show=show ) )
-                  
-    
+    item.url = __url_base__ + "/search?q=" + texto + '&type=series'
+    item.extra="series"
+    itemlist.extend (listado(item))
     
     return itemlist
 
@@ -95,7 +93,7 @@ def submenu(item):
 
     data = re.sub(r"\n|\r|\t|\s{2}|(<!--.*?-->)","",scrapertools.cache_page(item.url))
     
-    patron = '<div class="peliculas" id=(.*?)<div class="actions">'
+    patron = '<div class="grid-filter">(.*?)</div>'
     data = scrapertools.get_match(data,patron)
 
     patron = '<option value="([^"]+)">([^<]+)</option>'
@@ -117,51 +115,83 @@ def listado(item):
     itemlist = []
     
     data = re.sub(r"\n|\r|\t|\s{2}|(<!--.*?-->)","",scrapertools.cache_page(item.url))
-    patron = '<div class="actions">(.*?)</ul>'
+    patron = '<div class="grid-list(.*?)<div class="footer">'
             
     try:
         fichas = scrapertools.get_match(data,patron)
     except:
         return itemlist # Devolvemos lista vacia
-         
-    patron = '<a href="([^"]+)".*?' #url 
-    patron +='([^<]+)</a>.*?' #calidad
+    
+    
+    '''<a href="/movie/6916/Big-Eyes-2014-online" 
+    title="Big Eyes" data-ajax="true" data-label="Big Eyes - 2014" data-page="movies">
+    <div class="mask-container">
+    <div class="poster">
+    <div class="X9G8W3" data-image="/images/posters/670b9a082a8c9dc40e48b039501da7d1.png"></div>
+    <div class="quality c4">DVD Rip</div>
+    <div class="lang"><img src="./images/flags/lang/flag_0.png"/></div> o <div class="lang"></div>
+    <div class="gender">Drama</div>
+    <div class="title">Big Eyes</div></div></div>
+    </a>
+    '''
+    patron  = '<a href="([^"]+).*?' #url
     patron += 'title="([^"]+).*?' #titulo
     patron += 'data-label=".*?(\d{4})".*?' #año
-    patron += '<img src="([^"]+)">.*?</li>' #thumbnail
-    matches = re.compile(patron,re.DOTALL).findall(fichas) 
+    patron += '<div class="poster">(.*?)</a>' #info
+    matches = re.compile(patron,re.DOTALL).findall(fichas)
     #logger.info("[peliserie.py] listado: matches " + str(len(matches)))
     
     pag_actual= 1
     i=0
-    
-    #Preparar paginacion
-    if not 'page=' in item.url:
-        #http://www.peliserie.com/series
-        item.url += '?page=1'
-    else: 
-        #http://www.peliserie.com/series?page=3
-        pag_actual= float(scrapertools.get_match(item.url,'page=(\d+)'))
+    if 'search?q=' not in item.url:
+        #Preparar paginacion
+        if not 'page=' in item.url:
+                #http://www.peliserie.com/series
+                item.url += '?page=1'
+        else: 
+            #http://www.peliserie.com/series?page=3
+            pag_actual= float(scrapertools.get_match(item.url,'page=(\d+)'))
             
     if item.extra=='series':
         action = 'getTemporadas'
     else:
         action = "findvideos"
                         
-    for url, calidad, title, year, thumbnail in matches:
+    for url, title, year, info in matches:
         i += 1
         if i > ((pag_actual-1) * 56):
-            calidad= calidad[1:]
-            if calidad !='':
-                # Recuperar informacion
-                show = title
-                if item.extra=='peliculas':
-                    show += '|' + year #pasamos el año para buscar el fanart
-                url=__url_base__ + url
-                
-                title = title + ' [' + calidad + ']' 
-                itemlist.append( Item(channel=__channel__, action=action, title=title, url=url, thumbnail=__url_base__ +thumbnail, extra=item.extra,  show=show ) )
-                  
+        
+            # Recuperar informacion
+            thumbnail = __url_base__ + scrapertools.get_match(info,'data-image="([^"]+)"></div>.*?') 
+            show = title
+            if item.extra=='peliculas':
+                show += '|' + year #pasamos el año para buscar el fanart
+            url=__url_base__ + url
+            
+            if 'search?q=' in item.url:
+                # Resultado de busquedas
+                itemlist.append( Item(channel=__channel__, action=action, title=title, url=url, thumbnail=thumbnail, extra=item.extra, show=show ) )
+            else:
+                idiomas=''
+                try:
+                    idiomas = scrapertools.get_match(info,'<div class="lang">(.*?)</div>')
+                    lang=[]
+                    if 'flag_0.png' in idiomas: lang.append('Es')
+                    if 'flag_1.png' in idiomas: lang.append('Lat')
+                    if 'flag_2.png' in idiomas: lang.append('VO')
+                    if 'flag_3.png' in idiomas: lang.append('VOSE')
+                    if len(lang) > 0:
+                        idiomas=' [' +  "/".join(lang)+']'
+                except: #Si no incluye idiomas no pasa nada
+                    pass    
+                try:
+                    logger.info("[peliserie.py] listado item.extra: " + item.extra)
+                    calidad = ' [' + scrapertools.get_match(info,'<div class="quality[^"]+">([^<]*)</div>.*?') + ']'
+                    title = title + calidad + idiomas
+                    itemlist.append( Item(channel=__channel__, action=action, title=title, url=url, thumbnail=thumbnail, extra=item.extra,  show=show ) )
+                except: #Si no incluye la calidad no hay enlaces aun
+                    pass
+             
     #Paginacion
     if not '<div class="list-end">' in data: 
         url_next_page  = item.url[:item.url.rfind(str(pag_actual))] + str(pag_actual+1)
@@ -176,7 +206,7 @@ def getTemporadas(item):
     list_fanart=''
     
     data = re.sub(r"\n|\r|\t|\s{2}|(<!--.*?-->)","",scrapertools.cache_page(item.url))
-    patron = '<div class="lista-categorias categorias-tablet">(.*?)</div>'
+    patron = '<div class="tabs">(.*?)</div>'
     data = scrapertools.get_match(data,patron)
     patron= '<a href="\?season=(\d+)"'
     seasons= re.compile(patron,re.DOTALL).findall(data)
@@ -218,10 +248,9 @@ def getEpisodios (item):
     itemlist = []  
   
     data = re.sub(r"\n|\r|\t|\s{2}|(<!--.*?-->)","",scrapertools.cache_page(item.url))
-    patron = '<div class="lista-categorias categorias-tablet">(.*?)<div class="box-comments">'
+    patron = 'id="chapters-list"(.*?)</ul></div>'
     try:
         data = scrapertools.get_match(data,patron)
-        data = scrapertools.get_match(data,'<ul>(.*?)</ul>')
             
         '''
         <li data-id="7075" data-name="1x01">
@@ -271,20 +300,21 @@ def getEpisodios (item):
 def findvideos(item):
     logger.info("[peliserie.py] findvideos extra: " + item.extra)
     itemlist=[]
-    patron= '<h2>Ver online</h2>(.*?)</ul>'
+    
     if item.extra=='peliculas':
         # Solo mostramos enlaces para ver online
+        patron= 'id="contribution-view">(.*?)</ul>'
+        # Si quisiseramos mostrarlos todos: patron= 'id="contribution-view">(.*?)class="list-end"'
         
-                
         # Buscamos el fanart en TMDB
         year=item.show.split('|')[1]
         item.show = item.show.split('|')[0]
         item.fanart= get_fanart_tmdb(item.show, year= year)
         
-    #else: # 'series' y 'play_from_library'
+    else: # 'series' y 'play_from_library'
         # Solo mostramos enlaces para ver online
-        #patron= 'id="view-list">(.*?)</ul>'
-        
+        patron= 'id="view-list">(.*?)</ul>'
+        # Si quisiseramos mostrarlos todos: patron= 'id="id="view-list">(.*?)class="list-end"'
     
     
     # Descarga la página
@@ -359,7 +389,24 @@ def play(item):
 def episodios(item):
     # Necesario para las actualizaciones automaticas
     return getTemporadas(Item(url=item.url, show=item.show, extra= "add_serie"))
-   
+
+        
+# Verificación automática de canales: Esta función debe devolver "True" si todo está ok en el canal.
+def test():
+    bien = True
+    
+    # mainlist
+    mainlist_items = mainlist(Item())
+    submenu_items = submenu(mainlist_items[0])
+    listado_items = listado(submenu_items[0])
+    for listado_item in listado_items:
+        play_items = findvideos(listado_item)
+        
+        if len(play_items)>0:
+            return True
+
+    return False
+      
 
 '''
 tmdb

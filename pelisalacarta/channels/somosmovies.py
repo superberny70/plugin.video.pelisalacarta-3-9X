@@ -17,6 +17,8 @@ __channel__ = "somosmovies"
 __category__ = "F,S,D,A"
 __type__ = "generic"
 __title__ = "Somosmovies"
+__thumbnail__ = ""
+__adult__ = ""
 __language__ = "ES"
 
 DEBUG = config.get_setting("debug")

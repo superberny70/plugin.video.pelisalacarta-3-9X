@@ -17,9 +17,9 @@ from servers import servertools
 __adult__ = "false"
 __category__ = "F,S,D,A"
 __type__ = "generic"
-__title__ = "Por Descarga Directa"
+__title__ = "PorDescargaDirecta"
 __channel__ = "pordescargadirecta"
-__thumbnail__ = ""
+__thumbnail__ = "https://fbcdn-profile-a.akamaihd.net/hprofile-ak-xap1/v/t1.0-1/p160x160/1382353_525162780902689_956512610_n.png?oh=8ad745045ffac619f9b3153de0463320&oe=55BA463E&__gda__=1437696233_1e23710b1c06ea2ddf6d74a3c276384a"
 __language__ = "ES"
 
 

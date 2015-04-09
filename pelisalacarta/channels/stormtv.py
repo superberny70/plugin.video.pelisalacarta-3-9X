@@ -18,7 +18,7 @@ import urllib,urllib2
 import os,errno
 from core import stormlib
 
-
+__adult__ = "false"
 __channel__ = "stormtv"
 __category__ = "F,S,A"
 __type__ = "generic"

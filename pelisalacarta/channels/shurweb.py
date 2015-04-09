@@ -17,6 +17,8 @@ __channel__ = "shurweb"
 __category__ = "F,S,D,A"
 __type__ = "generic"
 __title__ = "Shurweb"
+__thumbnail__ = ""
+__adult__ = "false"
 __language__ = "ES"
 
 DEBUG = config.get_setting("debug")
