@@ -28,6 +28,7 @@ logger.info("[library.py] init")
 MOVIES_PATH = os.path.join(config.get_library_path(), 'CINE')
 SERIES_PATH = os.path.join(config.get_library_path(), 'SERIES')
 
+if not os.path.exists(config.get_library_path()): os.mkdir(config.get_library_path())
 if not os.path.exists(MOVIES_PATH): os.mkdir(MOVIES_PATH)
 if not os.path.exists(SERIES_PATH): os.mkdir(SERIES_PATH)
 
