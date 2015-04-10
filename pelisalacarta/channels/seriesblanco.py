@@ -15,14 +15,15 @@ from servers import servertools
 __channel__ = "seriesblanco"
 __category__ = "F"
 __type__ = "generic"
-__title__ = "SeriesBlanco"
+__title__ = "Series Blanco"
 __language__ = "ES"
-__thumbnail__ = "http://s6.postimg.org/j2a19lb2p/seriesblanco.jpg"
+__thumbnail__ = "http://seriesblanco.com/imags_estilos/logofb.jpg"
 __adult__ = "false"
 
 host = "http://seriesblanco.com/"
-idiomas = {'es':'Español','la':'Latino','vos':'VOS','vo':'VO'}
-
+idiomas = {'es':'Español','la':'Latino','vos':'VOS','vo':'VO','japovose':'Japones'}
+logo =  "http://seriesblanco.com/imags_estilos/logofb.jpg"
+fondo= "http://data.hdwallpapers.im/white_blue_background.jpg"
 DEBUG = config.get_setting("debug")
 
 def isGeneric():
@@ -32,10 +33,10 @@ def mainlist(item):
     logger.info("pelisalacarta.seriesblanco mainlist")
 
     itemlist = []
-    itemlist.append( Item(channel=__channel__, title="Series", action="listado", url="http://seriesblanco.com/lista_series/"))
-    itemlist.append( Item( channel=__channel__, title="Novedades", action="series", url="http://seriesblanco.com/" ) )
-    itemlist.append( Item( channel=__channel__, title="Series mas vistas", action="vistas", url="http://seriesblanco.com/" ) )
-    itemlist.append( Item( channel=__channel__, title="Buscar...", action="search", url=host) )
+    itemlist.append( Item(channel=__channel__, title="Series", action="listado", url="http://seriesblanco.com/lista_series/", thumbnail = logo , fanart= fondo))
+    itemlist.append( Item( channel=__channel__, title="Novedades", action="series", url="http://seriesblanco.com/" , thumbnail = logo , fanart= fondo) )
+    itemlist.append( Item( channel=__channel__, title="Series mas vistas", action="vistas", url="http://seriesblanco.com/",  thumbnail = logo , fanart= fondo ) )
+    itemlist.append( Item( channel=__channel__, title="Buscar...", action="search", url=host, thumbnail = logo , fanart= fondo) )
 
     return itemlist
 
@@ -122,16 +123,16 @@ def series(item):
     data = scrapertools.cache_page(item.url)
     data = re.sub(r"\n|\r|\t|\s{2}|&nbsp;|<Br>|<BR>|<br>|<br/>|<br />|-\s","",data)
     data = re.sub(r"<!--.*?-->","",data)
-
-    patron = '<h6.*?width=\'25\'>'
+    
+    patron = '<h6.*?<img src=\'([^\']+)\' width=\'25\'>'
     patron += '([^<]+).*?'
     patron += 'href="([^"]+)".*?'
-    patron += 'src=\'([^\']+)\''
+    patron += 'src=\'([^\']+)\'.*?'
 
     matches = re.compile(patron,re.DOTALL).findall(data)
 
-    for scrapedtitle, scrapedurl, scrapedthumbnail in matches:
-        itemlist.append( Item(channel=__channel__, title =scrapedtitle , url=urlparse.urljoin(host,scrapedurl), thumbnail= scrapedthumbnail, fanart="http://portfolio.vernier.se/files/2014/03/light-grey-wood-photography-hd-wallpaper-1920x1200-46471.jpg", action="findvideos", show=scrapedtitle) )
+    for scrapedidioma, scrapedtitle, scrapedurl, scrapedthumbnail in matches:
+        itemlist.append( Item(channel=__channel__, title =scrapedtitle , url=urlparse.urljoin(host,scrapedurl), thumbnail= scrapedthumbnail, fanart="http://portfolio.vernier.se/files/2014/03/light-grey-wood-photography-hd-wallpaper-1920x1200-46471.jpg", action="findvideos", show=scrapedtitle ,extra = scrapedidioma) )
 
     return itemlist
 
@@ -143,28 +144,28 @@ def episodios(item):
     # Descarga la página
     data = scrapertools.cache_page(item.url)
     data = re.sub(r"\n|\r|\t|\s{2}|&nbsp;|<Br>|<BR>|<br>|<br/>|<br />|-\s","",data)
-    data = re.sub(r"<!--.*?-->","",data)
-    data = re.sub(r"a></td><td> <img src=/banderas/","a><idioma/",data)
-    data = re.sub(r" <img src=/banderas/","|",data)
-    data = re.sub(r"\.png border='\d+' height='\d+' width='\d+' /><","/idioma><",data)
-    data = re.sub(r"\.png border='\d+' height='\d+' width='\d+' />","",data)
+    
 
     #<a href='/serie/534/temporada-1/capitulo-00/the-big-bang-theory.html'>1x00 - Capitulo 00 </a></td><td> <img src=/banderas/vo.png border='0' height='15' width='25' /> <img src=/banderas/vos.png border='0' height='15' width='25' /></td></tr>
+    patronseries = "</script></center>(.*?)</td></tbody></table><div style='clear: both;'></div>"
+    matchesseries = re.compile(patronseries,re.DOTALL).findall(data)
+    
+    for bloque_series in matchesseries:
+        if (DEBUG): logger.info("bloque_series="+bloque_series)
+    # Extrae las series
 
-    patron = "<a href='([^']+)'>([^<]+)</a><idioma/([^/]+)/idioma>"
+        patron = "<tr><td>.*?<a href='([^']+)'>([^<]+)</a></td><td>.*?<img src=/([^']+) "
 
-    matches = re.compile(patron,re.DOTALL).findall(data)
+        matches = re.compile(patron,re.DOTALL).findall(bloque_series)
+        scrapertools.printMatches(matches)
 
-    for scrapedurl, scrapedtitle, scrapedidioma in matches:
-        scrapedfanart = scrapertools.get_match(data,"<img id='port' src='([^']+)'")
-        idioma = ""
-        for i in scrapedidioma.split("|"):
-            idioma+= " [" + idiomas[i] + "]"
-        title = item.title + " - " + scrapedtitle + idioma
-        itemlist.append( Item(channel=__channel__, title =title , url=urlparse.urljoin(host,scrapedurl), action="findvideos", thumbnail=item.thumbnail, fanart=scrapedfanart, show=item.show) )
+        for scrapedurl, scrapedtitle, scrapedidioma in matches:
+            scrapedfanart = scrapertools.get_match(data,"<img id='port' src='([^']+)'")
+            title = item.title + " - " + scrapedtitle
+            itemlist.append( Item(channel=__channel__, title =title , url=urlparse.urljoin(host,scrapedurl), action="findvideos", thumbnail=item.thumbnail, extra =scrapedidioma, fanart=scrapedfanart, show=item.show) )
 
-    if len(itemlist) == 0 and "<title>404 Not Found</title>" in data:
-        itemlist.append( Item(channel=__channel__, title ="la url '"++"' parece no estar disponible en la web. Iténtalo más tarde." , url=item.url, action="series") )
+        if len(itemlist) == 0 and "<title>404 Not Found</title>" in data:
+            itemlist.append( Item(channel=__channel__, title ="la url '"++"' parece no estar disponible en la web. Iténtalo más tarde." , url=item.url, action="series") )
 
     ## Opción "Añadir esta serie a la biblioteca de XBMC"
     if (config.get_platform().startswith("xbmc") or config.get_platform().startswith("boxee")) and len(itemlist)>0:
@@ -181,7 +182,6 @@ def findvideos(item):
     data = scrapertools.cache_page(item.url)
     data = re.sub(r"\n|\r|\t|\s{2}|&nbsp;|<Br>|<BR>|<br>|<br/>|<br />|-\s","",data)
     data = re.sub(r"<!--.*?-->","",data)
-    data = re.sub(r"<td class='tam12'></td></tr>","<td class='tam12'>SD</td></tr>",data)
     data = re.sub(r"<center>|</center>","",data)
 
     #<tr><td class='tam12'><img src='/banderas/es.png' width='30' height='20' /></td><td class='tam12'>2014-10-04</td><td class='tam12'><center><a href='/enlace/534/1/01/1445121/' rel='nofollow' target='_blank' alt=''><img src='/servidores/allmyvideos.jpg' width='80' height='25' /></a></center></td><td class='tam12'><center>Darkgames</center></td><td class='tam12'></td></tr>
@@ -193,13 +193,12 @@ def findvideos(item):
     patron+= "<td class='tam12'>([^<]+)</td>"
     patron+= "<td class='tam12'><a href='([^']+)'[^>]+>"
     patron+= "<img src='/servidores/([^\.]+)\.[^']+'[^>]+></a></td>"
-    patron+= "<td class='tam12'>[^<]+</td>"
-    patron+= "<td class='tam12'>([^<]+)</td>"
+    
     matches = re.compile(patron,re.DOTALL).findall(data)
-
-    for scrapedidioma, scrapedfecha, scrapedurl, scrapedservidor, scrapedcalidad in matches:
-        title = "Ver en " + scrapedservidor + " [" + idiomas[scrapedidioma] + "] [" + scrapedcalidad + "] (" + scrapedfecha + ")"
-        itemlist.append( Item(channel=__channel__, title =title , url=urlparse.urljoin(host,scrapedurl), action="play", thumbnail=item.thumbnail, fanart=item.fanart, show=item.show) )
+    
+    for scrapedidioma, scrapedfecha, scrapedurl, scrapedservidor in matches:
+        title = "Ver en " + scrapedservidor + " [" + idiomas[scrapedidioma] + "] (" + scrapedfecha + ")"
+        itemlist.append( Item(channel=__channel__, title =title , url=urlparse.urljoin(host,scrapedurl), action="play", thumbnail=urlparse.urljoin(host,item.extra), fanart=item.fanart, show=item.show) )
 
     return itemlist
 
