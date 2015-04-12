@@ -182,6 +182,7 @@ def findvideos(item):
     data = scrapertools.cache_page(item.url)
     data = re.sub(r"\n|\r|\t|\s{2}|&nbsp;|<Br>|<BR>|<br>|<br/>|<br />|-\s","",data)
     data = re.sub(r"<!--.*?-->","",data)
+    data = re.sub(r"<td class='tam12'></td></tr>","<td class='tam12'>SD</td></tr>",data)
     data = re.sub(r"<center>|</center>","",data)
 
     #<tr><td class='tam12'><img src='/banderas/es.png' width='30' height='20' /></td><td class='tam12'>2014-10-04</td><td class='tam12'><center><a href='/enlace/534/1/01/1445121/' rel='nofollow' target='_blank' alt=''><img src='/servidores/allmyvideos.jpg' width='80' height='25' /></a></center></td><td class='tam12'><center>Darkgames</center></td><td class='tam12'></td></tr>
@@ -193,11 +194,13 @@ def findvideos(item):
     patron+= "<td class='tam12'>([^<]+)</td>"
     patron+= "<td class='tam12'><a href='([^']+)'[^>]+>"
     patron+= "<img src='/servidores/([^\.]+)\.[^']+'[^>]+></a></td>"
+    patron+= "<td class='tam12'>[^<]+</td>"
+    patron+= "<td class='tam12'>([^<]+)</td>"
     
     matches = re.compile(patron,re.DOTALL).findall(data)
     
-    for scrapedidioma, scrapedfecha, scrapedurl, scrapedservidor in matches:
-        title = "Ver en " + scrapedservidor + " [" + idiomas[scrapedidioma] + "] (" + scrapedfecha + ")"
+    for scrapedidioma, scrapedfecha, scrapedurl, scrapedservidor, scrapedcalidad in matches:
+        title = "Ver en " + scrapedservidor + " [" + idiomas[scrapedidioma] + "] [" + scrapedcalidad + "] (" + scrapedfecha + ")"
         itemlist.append( Item(channel=__channel__, title =title , url=urlparse.urljoin(host,scrapedurl), action="play", thumbnail=urlparse.urljoin(host,item.extra), fanart=item.fanart, show=item.show) )
 
     return itemlist
