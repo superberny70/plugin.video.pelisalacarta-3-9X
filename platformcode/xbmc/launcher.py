@@ -57,10 +57,14 @@ def EjecutarFuncion(item):
             config.set_setting('enableadultmode','false')
             
             if config.get_setting("updatecheck2")=="true": 
+                xbmcgui.Dialog().notification('Actualizaciones automaticas', 'Buscado nueva versión...', xbmcgui.NOTIFICATION_INFO ,1000)
                 itemlist.extend(ActualizarPlugin())
             if config.get_setting("updatechannels")=="true" and len(itemlist)==0: # Si hay una nueva version del plugin no actualizar canales
+                xbmcgui.Dialog().notification('Actualizaciones automaticas', 'Buscado actualizaciones...', xbmcgui.NOTIFICATION_INFO ,1000)
                 itemlist.append(ActualizarCanal(item.channel,config.get_localized_string(30064)))
+                xbmcgui.Dialog().notification('Actualizaciones automaticas', 'Buscado actualizaciones de servidores...', xbmcgui.NOTIFICATION_INFO ,3000)
                 itemlist.append(ActualizarServers())
+                xbmcgui.Dialog().notification('Actualizaciones automaticas', 'Buscado nuevos canales...', xbmcgui.NOTIFICATION_INFO ,1000)
                 updater.sincronizar_canales()
         elif config.get_setting("updatechannels")=="true": 
             itemlist.append(ActualizarCanal(item.channel,"¡Canal descargado y actualizado!"))

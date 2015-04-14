@@ -139,9 +139,13 @@ def updatechannel(channel_name):
     '''
     Funcion experimental para actualizar el canal desde github basandose en la fecha de modificacion de los archivos.
     '''
-    remote_files_url = "https://github.com/superberny70/plugin.video.pelisalacarta/tree/master/pelisalacarta/channels"
-    local_files_path=os.path.join( config.get_runtime_path(), PLUGIN_NAME , 'channels' , channel_name+'.py')
- 
+    if channel_name == "channelselector":
+        remote_files_url = "https://github.com/superberny70/plugin.video.pelisalacarta"
+        local_files_path=os.path.join( config.get_runtime_path() , channel_name+'.py')
+    else:
+        remote_files_url = "https://github.com/superberny70/plugin.video.pelisalacarta/tree/master/pelisalacarta/channels"
+        local_files_path=os.path.join( config.get_runtime_path(), PLUGIN_NAME , 'channels' , channel_name + '.py')
+     
     data = re.sub(r"\n|\r|\t|\s{2}|(<!--.*?-->)","",scrapertools.cache_page(remote_files_url))
     #last_commit= scrapertools.find_single_match(data,'<time class="updated" datetime="([^"]+)"')
     
@@ -161,6 +165,7 @@ def updatechannel(channel_name):
     
     #logger.info("[updater.py] remote_data= "+str(dt_remote) + " local_data= " + str(dt_local ))
     if dt_remote > dt_local:
+        dialogo('Actualizando canal', 'Actualizando canal ' + channel_name )
         return download_channel(channel_name)
         
     return False
@@ -259,9 +264,11 @@ def list_remote_channels():
     remote_files_url = "https://github.com/superberny70/plugin.video.pelisalacarta/tree/master/pelisalacarta/channels"
             
     data = re.sub(r"\n|\r|\t|\s{2}|(<!--.*?-->)","",scrapertools.cache_page(remote_files_url))
-    #patron = '<li><a href="([a-zA-Z0-9]+\.py)">.*?</a></li>'
-    patron = '<td class="content">.*?title="([a-zA-Z0-9]+\.py)">'
-    files_remotos= re.compile(patron,re.DOTALL).findall(data)
+    last_commit= scrapertools.find_single_match(data,'<time class="updated" datetime="([^"]+)"')
+    files_remotos=[]
+    if last_commit!='':
+        patron = '<td class="content">.*?title="([a-zA-Z0-9]+\.py)">'
+        files_remotos= re.compile(patron,re.DOTALL).findall(data)
         
     #logger.info("updater.list_remote_channels :"  + str(files_remotos))
     return files_remotos
@@ -289,9 +296,12 @@ def sincronizar_canales():
 
     lista_borrables=[]
     lista_nuevos=[]
-    files_locales= list_local_channels()
     files_remotos= list_remote_channels()
-
+    
+    if len(files_remotos) == 0: return None
+    
+    files_locales= list_local_channels()
+    
     for channel in files_remotos:
         if channel not in files_locales:
             lista_nuevos.append(channel)
@@ -389,6 +399,7 @@ def ini_list_channels_json():
         Inicializa un archivo json con el listado de canales instalados
     '''
     logger.info("[updater.py] Iniciar list_channels.json")
+    dialogo('Sincronizando canales', 'Iniciando el indice de canales...')
     local_files_path =  list_local_channels()
     
     indice_canales= {}
@@ -415,13 +426,15 @@ def list_remote_servers():
     remote_files_url = "https://github.com/superberny70/plugin.video.pelisalacarta/tree/master/servers"
     
     data = re.sub(r"\n|\r|\t|\s{2}|(<!--.*?-->)","",scrapertools.cache_page(remote_files_url))
-    #last_commit= scrapertools.find_single_match(data,'<time class="updated" datetime="([^"]+)"')
+    last_commit= scrapertools.find_single_match(data,'<time class="updated" datetime="([^"]+)"')
     
     patron = '<td class="content">.*?title="([a-zA-Z0-9]+\.py)".*?' # name_server
     patron += '<time datetime="([^"]+)"' # date_time
 
     matches= re.compile(patron,re.DOTALL).findall(data)
+    
     d={}
+    d['__ultima_actualizacion__']= last_commit.replace('T',' ').replace('Z','')
     for name_server, date_time in matches:
         d[name_server]= date_time.replace('T',' ').replace('Z','')
   
@@ -434,15 +447,17 @@ def ini_list_servers_json():
         Inicializa un archivo json con el listado de conectores/servers instalados
     '''
     local_files_path = os.path.join( config.get_runtime_path(), 'servers')
-            
+    dialogo('Sincronizando servidores', 'Iniciando el indice de servidores...')
+    
     files_locales= os.listdir(local_files_path)
     files_locales= [c for c in files_locales if c.endswith('.py') and not c.startswith('_')]
     
     indice_servers={}
+    indice_servers['__ultima_actualizacion__']={"fecha":datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
     for s in files_locales:
         indice_servers[s]= {"fecha":str(datetime.datetime.fromtimestamp(os.path.getmtime (os.path.join( local_files_path, s))))}
         
-    # Guardamos de nuevo list_servers.json
+    # Guardamos list_servers.json
     with codecs.open(PATH_LIST_SERVERS_JSON, 'w','utf-8') as outfile:
         json.dump(indice_servers, outfile, sort_keys = True, indent = 4, ensure_ascii=False, encoding="utf8")
         
@@ -460,20 +475,31 @@ def updaterservers():
     else: # ...sino lo creamos
         indice_servers= ini_list_servers_json()       
     
-    for name,date in list_remote_servers().items():
-        struct1= time.strptime(date,'%Y-%m-%d %H:%M:%S')
-        dt1 = datetime.datetime.fromtimestamp(time.mktime(struct1))
-        dc_server= indice_servers.get(name,'')
-        if dc_server=='':
-            struct2= time.strptime("2014-01-01 00:00:00",'%Y-%m-%d %H:%M:%S')
-        else:
-            struct2= time.strptime(dc_server["fecha"],'%Y-%m-%d %H:%M:%S')
-        dt2 = datetime.datetime.fromtimestamp(time.mktime(struct2))
-        
-        if dt1 > dt2: 
-            logger.info("updater.updaterservers : Actualizar " + name ) 
-            dialogo('Actualizando conectores', 'Descargando ' + name.replace('.py','') )
-            ret= download_server(name) 
+    #Obtenemos las fechas de las ultimas actualizaciones del servidor y local
+    remotes_servers=list_remote_servers()
+    struct1= time.strptime(remotes_servers['__ultima_actualizacion__'],'%Y-%m-%d %H:%M:%S')
+    dt_remote = datetime.datetime.fromtimestamp(time.mktime(struct1))
+    
+    struct2= time.strptime(indice_servers["__ultima_actualizacion__"]["fecha"],'%Y-%m-%d %H:%M:%S')
+    dt_local = datetime.datetime.fromtimestamp(time.mktime(struct2))
+    
+    if dt_remote > dt_local:
+        # Si la fecha de actualizacion del repositorio remoto es mas reciente q la fecha de actualizacion de la carpeta local hay q actualizar
+        for name,date in remotes_servers.items():
+            struct1= time.strptime(date,'%Y-%m-%d %H:%M:%S')
+            dt_remote = datetime.datetime.fromtimestamp(time.mktime(struct1))
+            dc_server= indice_servers.get(name,'')
+            if dc_server=='':
+                struct2= time.strptime("2014-01-01 00:00:00",'%Y-%m-%d %H:%M:%S')
+            else:
+                struct2= time.strptime(dc_server["fecha"],'%Y-%m-%d %H:%M:%S')
+            dt_local = datetime.datetime.fromtimestamp(time.mktime(struct2))
+            print dt_remote
+            print dt_local
+            if dt_remote > dt_local: 
+                logger.info("updater.updaterservers : Actualizar " + name ) 
+                dialogo('Actualizando conectores', 'Descargando ' + name.replace('.py','') )
+                ret= download_server(name) 
     return ret
     
 def download_server(server_name):
@@ -498,7 +524,7 @@ def download_server(server_name):
         if os.path.exists(PATH_LIST_SERVERS_JSON): # Si existe list_servers.json lo abrimos...
             with codecs.open(PATH_LIST_SERVERS_JSON,'r','utf-8') as input_file:
                 indice_servers= json.load(input_file)
-
+            indice_servers['ultima_actualizacion']={"fecha":datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
             indice_servers[server_name]= {"fecha":str(datetime.datetime.fromtimestamp(os.path.getmtime (local_files_path)))}
             with codecs.open(PATH_LIST_SERVERS_JSON, 'w','utf-8') as outfile:
                 json.dump(indice_servers, outfile, sort_keys = True, indent = 4, ensure_ascii=False, encoding="utf8")
