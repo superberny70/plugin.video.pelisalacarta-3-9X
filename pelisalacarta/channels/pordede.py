@@ -21,22 +21,22 @@ __category__ = "A"
 __type__ = "generic"
 __title__ = "Pordede"
 __channel__ = "pordede"
-__adult__ = "false"
-__thumbnail__ = ""
 __language__ = "ES"
 __creationdate__ = "20140615"
+__adult__ = "false"
 
 DEFAULT_HEADERS = []
 DEFAULT_HEADERS.append( ["User-Agent","Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.6; es-ES; rv:1.9.2.12) Gecko/20101026 Firefox/3.6.12"] )
+DEFAULT_HEADERS.append( ["Referer","http://www.pordede.com"] )
 
 def isGeneric():
     return True
 
 def login():
-
     url = "http://www.pordede.com/site/login"
     post = "LoginForm[username]="+config.get_setting("pordedeuser")+"&LoginForm[password]="+config.get_setting("pordedepassword")
-    data = scrapertools.cache_page(url,post=post)
+    headers = DEFAULT_HEADERS[:]
+    data = scrapertools.cache_page(url,headers=headers,post=post)
 
 def mainlist(item):
     logger.info("pelisalacarta.channels.pordede mainlist")
@@ -44,11 +44,11 @@ def mainlist(item):
     itemlist = []
 
     if config.get_setting("pordedeaccount")!="true":
-        itemlist.append( Item( channel=__channel__ , title="Habilita tu cuenta en la configuraci√≥n..." , action="openconfig" , url="" , folder=False ) )
+        itemlist.append( Item( channel=__channel__ , title="Habilita tu cuenta en la configuraciÛn..." , action="openconfig" , url="" , folder=False ) )
     else:
         login()
         itemlist.append( Item(channel=__channel__, action="menuseries"    , title="Series"              , url="" ))
-        itemlist.append( Item(channel=__channel__, action="menupeliculas" , title="Pel√≠culas"           , url="" ))
+        itemlist.append( Item(channel=__channel__, action="menupeliculas" , title="PelÌculas"           , url="" ))
         itemlist.append( Item(channel=__channel__, action="listas_sigues" , title="Listas que sigues"   , url="http://www.pordede.com/lists/following" ))
         itemlist.append( Item(channel=__channel__, action="tus_listas"    , title="Tus listas"          , url="http://www.pordede.com/lists/yours" ))
         itemlist.append( Item(channel=__channel__, action="listas_sigues" , title="Top listas"          , url="http://www.pordede.com/lists" ))
@@ -65,9 +65,9 @@ def menuseries(item):
 
     itemlist = []
     itemlist.append( Item(channel=__channel__, action="peliculas" , title="Novedades"            , url="http://www.pordede.com/series/loadmedia/offset/0/showlist/hot" ))
-    itemlist.append( Item(channel=__channel__, action="generos"   , title="Por g√©neros"          , url="http://www.pordede.com/series" ))
+    itemlist.append( Item(channel=__channel__, action="generos"   , title="Por gÈneros"          , url="http://www.pordede.com/series" ))
     itemlist.append( Item(channel=__channel__, action="peliculas" , title="Siguiendo"            , url="http://www.pordede.com/series/following" ))
-    itemlist.append( Item(channel=__channel__, action="siguientes" , title="Siguientes Cap√≠tulos" , url="http://www.pordede.com" ))
+    itemlist.append( Item(channel=__channel__, action="siguientes" , title="Siguientes CapÌtulos" , url="http://www.pordede.com" ))
     itemlist.append( Item(channel=__channel__, action="peliculas" , title="Favoritas"            , url="http://www.pordede.com/series/favorite" ))
     itemlist.append( Item(channel=__channel__, action="peliculas" , title="Pendientes"           , url="http://www.pordede.com/series/pending" ))
     itemlist.append( Item(channel=__channel__, action="peliculas" , title="Terminadas"           , url="http://www.pordede.com/series/seen" ))
@@ -81,7 +81,7 @@ def menupeliculas(item):
 
     itemlist = []
     itemlist.append( Item(channel=__channel__, action="peliculas" , title="Novedades"            , url="http://www.pordede.com/pelis/loadmedia/offset/0/showlist/hot" ))
-    itemlist.append( Item(channel=__channel__, action="generos" , title="Por g√©neros"            , url="http://www.pordede.com/pelis" ))
+    itemlist.append( Item(channel=__channel__, action="generos" , title="Por gÈneros"            , url="http://www.pordede.com/pelis" ))
     itemlist.append( Item(channel=__channel__, action="peliculas" , title="Favoritas"            , url="http://www.pordede.com/pelis/favorite" ))
     itemlist.append( Item(channel=__channel__, action="peliculas" , title="Pendientes"           , url="http://www.pordede.com/pelis/pending" ))
     itemlist.append( Item(channel=__channel__, action="peliculas" , title="Vistas"               , url="http://www.pordede.com/pelis/seen" ))
@@ -93,8 +93,10 @@ def menupeliculas(item):
 def generos(item):
     logger.info("pelisalacarta.channels.pordede generos")
 
+    headers = DEFAULT_HEADERS[:]
+    
     # Descarga la pagina
-    data = scrapertools.cache_page(item.url)
+    data = scrapertools.cache_page(item.url, headers=headers)
     if (DEBUG): logger.info("data="+data)
 
     # Extrae las entradas (carpetas)
@@ -130,7 +132,7 @@ def search(item,texto):
     item.url = item.url+"/search/query/"+texto+"/years/1950/on/undefined/showlist/all"
     try:
         return buscar(item)
-    # Se captura la excepci√≥n, para no interrumpir al buscador global si un canal falla
+    # Se captura la excepciÛn, para no interrumpir al buscador global si un canal falla
     except:
         import sys
         for line in sys.exc_info():
@@ -142,7 +144,7 @@ def buscar(item):
 
     # Descarga la pagina
     headers = DEFAULT_HEADERS[:]
-    headers.append(["Referer",item.extra])
+    #headers.append(["Referer",item.extra])
     headers.append(["X-Requested-With","XMLHttpRequest"])
     data = scrapertools.cache_page(item.url,headers=headers)
     if (DEBUG): logger.info("data="+data)
@@ -189,7 +191,7 @@ def parse_mixed_results(item,data):
         old_offset = scrapertools.find_single_match(item.url,"offset/(\d+)/")
         new_offset = int(old_offset)+30
         url = item.url.replace("offset/"+old_offset,"offset/"+str(new_offset))
-        itemlist.append( Item(channel=__channel__, action="lista" , title=">> P√°gina siguiente" , extra=item.extra, url=url))
+        itemlist.append( Item(channel=__channel__, action="lista" , title=">> P·gina siguiente" , extra=item.extra, url=url))
 
     try:
         import xbmcplugin
@@ -205,7 +207,7 @@ def siguientes(item):
 
     # Descarga la pagina
     headers = DEFAULT_HEADERS[:]
-    headers.append(["Referer",item.extra])
+    #headers.append(["Referer",item.extra])
     headers.append(["X-Requested-With","XMLHttpRequest"])
     data = scrapertools.cache_page(item.url,headers=headers)
     if (DEBUG): logger.info("data="+data)
@@ -250,9 +252,11 @@ def siguientes(item):
 def episodio(item):
     logger.info("pelisalacarta.channels.pordede episodio")
     itemlist = []
+    
+    headers = DEFAULT_HEADERS[:]
 
     # Descarga la pagina
-    data = scrapertools.cache_page(item.url)
+    data = scrapertools.cache_page(item.url, headers=headers)
     if (DEBUG): logger.info("data="+data)
 
     session = str(int(item.extra.split("|")[0]))
@@ -291,7 +295,7 @@ def peliculas(item):
 
     # Descarga la pagina
     headers = DEFAULT_HEADERS[:]
-    headers.append(["Referer",item.extra])
+    #headers.append(["Referer",item.extra])
     headers.append(["X-Requested-With","XMLHttpRequest"])
     data = scrapertools.cache_page(item.url,headers=headers)
     if (DEBUG): logger.info("data="+data)
@@ -306,9 +310,11 @@ def peliculas(item):
 def episodios(item):
     logger.info("pelisalacarta.channels.pordede episodios")
     itemlist = []
+    
+    headers = DEFAULT_HEADERS[:]
 
     # Descarga la pagina
-    data = scrapertools.cache_page(item.url)
+    data = scrapertools.cache_page(item.url, headers=headers)
     if (DEBUG): logger.info("data="+data)
 
     patrontemporada = '<div class="checkSeason"[^>]+>([^<]+)<div class="right" onclick="controller.checkSeason(.*?)\s+</div></div>'
@@ -337,7 +343,7 @@ def episodios(item):
             if (DEBUG): logger.info("title=["+title+"], url=["+url+"], thumbnail=["+thumbnail+"]")
 
     if config.get_platform().startswith("xbmc") or config.get_platform().startswith("boxee"):
-        itemlist.append( Item(channel='pordede', title="A√±adir esta serie a la biblioteca de XBMC", url=item.url, action="add_serie_to_library", extra="episodios###", show=item.show) )
+        itemlist.append( Item(channel='pordede', title="AÒadir esta serie a la biblioteca de XBMC", url=item.url, action="add_serie_to_library", extra="episodios###", show=item.show) )
         itemlist.append( Item(channel='pordede', title="Descargar todos los episodios de la serie", url=item.url, action="download_all_episodes", extra="episodios", show=item.show))
 
     return itemlist
@@ -347,7 +353,7 @@ def parse_listas(item, patron):
 
     # Descarga la pagina
     headers = DEFAULT_HEADERS[:]
-    headers.append(["Referer",item.extra])
+    #headers.append(["Referer",item.extra])
     headers.append(["X-Requested-With","XMLHttpRequest"])
     data = scrapertools.cache_page(item.url,headers=headers)
     if (DEBUG): logger.info("data="+data)
@@ -370,7 +376,7 @@ def parse_listas(item, patron):
     nextpage = scrapertools.find_single_match(data,'data-url="(/lists/loadlists/offset/[^"]+)"')
     if nextpage != '':
         url = urlparse.urljoin(item.url,nextpage)
-        itemlist.append( Item(channel=__channel__, action="listas_sigues" , title=">> P√°gina siguiente" , extra=item.extra, url=url))
+        itemlist.append( Item(channel=__channel__, action="listas_sigues" , title=">> P·gina siguiente" , extra=item.extra, url=url))
 
     try:
         import xbmcplugin
@@ -408,7 +414,7 @@ def lista(item):
 
     # Descarga la pagina
     headers = DEFAULT_HEADERS[:]
-    headers.append(["Referer",item.extra])
+    #headers.append(["Referer",item.extra])
     headers.append(["X-Requested-With","XMLHttpRequest"])
     data = scrapertools.cache_page(item.url,headers=headers)
     if (DEBUG): logger.info("data="+data)
@@ -496,7 +502,7 @@ def findvideos(item, verTodos=False):
         if (DEBUG): logger.info("title=["+title+"], url=["+url+"], thumbnail=["+thumbnail+"]")
         if sortlinks > 0:
             # orden1 para dejar los "downloads" detras de los "ver" al ordenar
-            # orden2 segun configuraci√≥n
+            # orden2 segun configuraciÛn
             if sortlinks == 1:
                 orden = valoracion
             elif sortlinks == 2:
@@ -552,7 +558,7 @@ def play(item):
     #data2 = scrapertools.cache_page(url,headers=headers)
     #logger.info("pelisalacarta.channels.pordede play (interstitial) url="+url)
     #logger.info("data2="+data2)
-    #url2 = scrapertools.find_single_match(data2,'<a href="([^"]+)"><button disabled>Ir al v√≠deo</button>')
+    #url2 = scrapertools.find_single_match(data2,'<a href="([^"]+)"><button disabled>Ir al vÌdeo</button>')
     #url2 = urlparse.urljoin(item.url,url2)
     #headers = DEFAULT_HEADERS[:]
     #headers.append( ["Referer" , url2 ])
@@ -579,7 +585,8 @@ def checkseen(item):
         scrapertools.downloadpage("http://www.pordede.com/ajax/action", post="model=episode&id="+episode+"&action=seen&value=1")
 
     if "/what/peli" in item:
-        data = scrapertools.cache_page(item)
+        headers = DEFAULT_HEADERS[:]
+        data = scrapertools.cache_page(item, headers=headers)
         # GET MOVIE ID
         movieid = scrapertools.find_single_match(data,'href="/links/create/ref_id/([0-9]+)/ref_model/')
         scrapertools.downloadpage("http://www.pordede.com/ajax/mediaaction", post="model=peli&id="+movieid+"&action=status&value=3")
@@ -609,10 +616,10 @@ def infosinopsis(item):
     scrapedcasting = re.compile('href="/star/[^"]+">([^<]+)</a><br/><span>([^<]+)</span>',re.DOTALL).findall(data)
 
     title = scrapertools.htmlclean(scrapedtitle)
-    plot = "A√±o: [B]"+scrapedyear+"[/B]"
-    plot += " , Duraci√≥n: [B]"+scrapedduration+"[/B]"
-    plot += " , Puntuaci√≥n usuarios: [B]"+scrapedvalue+"[/B]"
-    plot += "\nG√©neros: "+", ".join(scrapedgenres)
+    plot = "AÒo: [B]"+scrapedyear+"[/B]"
+    plot += " , DuraciÛn: [B]"+scrapedduration+"[/B]"
+    plot += " , PuntuaciÛn usuarios: [B]"+scrapedvalue+"[/B]"
+    plot += "\nGÈneros: "+", ".join(scrapedgenres)
     plot += "\n\nSinopsis:\n"+scrapertools.htmlclean(scrapedplot)
     plot += "\n\nCasting:\n"
     for actor,papel in scrapedcasting:
@@ -652,7 +659,7 @@ try:
 except:
     pass
 
-# Valoraciones de enlaces, los valores m√°s altos se mostrar√°n primero :
+# Valoraciones de enlaces, los valores m·s altos se mostrar·n primero :
 
 def valora_calidad(video, audio):
     prefs_video = [ 'hdmicro', 'hd1080', 'hd720', 'hdrip', 'dvdrip', 'rip', 'tc-screener', 'ts-screener' ]
@@ -670,9 +677,9 @@ def valora_idioma(idioma_0, idioma_1):
     prefs = [ 'spanish', 'spanish LAT', 'catalan', 'english', 'french' ]
 
     pts = (9 - prefs.index(idioma_0) if idioma_0 in prefs else 1) * 10
-    if idioma_1 != '': # si hay subt√≠tulos
+    if idioma_1 != '': # si hay subtÌtulos
         idioma_1 = idioma_1.replace(' SUB', '')
         pts += 8 - prefs.index(idioma_1) if idioma_1 in prefs else 1
     else:
-        pts += 9 # sin subt√≠tulos por delante
+        pts += 9 # sin subtÌtulos por delante
     return pts
