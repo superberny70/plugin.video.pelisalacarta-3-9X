@@ -21,9 +21,11 @@ __category__ = "A"
 __type__ = "generic"
 __title__ = "Pordede"
 __channel__ = "pordede"
+__adult__ = "false"
+__thumbnail__ = ""
 __language__ = "ES"
 __creationdate__ = "20140615"
-__adult__ = "false"
+
 
 DEFAULT_HEADERS = []
 DEFAULT_HEADERS.append( ["User-Agent","Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.6; es-ES; rv:1.9.2.12) Gecko/20101026 Firefox/3.6.12"] )
@@ -343,8 +345,15 @@ def episodios(item):
             if (DEBUG): logger.info("title=["+title+"], url=["+url+"], thumbnail=["+thumbnail+"]")
 
     if config.get_platform().startswith("xbmc") or config.get_platform().startswith("boxee"):
-        itemlist.append( Item(channel='pordede', title="Añadir esta serie a la biblioteca de XBMC", url=item.url, action="add_serie_to_library", extra="episodios###", show=item.show) )
-        itemlist.append( Item(channel='pordede', title="Descargar todos los episodios de la serie", url=item.url, action="download_all_episodes", extra="episodios", show=item.show))
+        # con año y valoracion la serie no se puede actualizar correctamente, si ademas cambia la valoracion, creara otra carpeta
+        # Sin año y sin valoración:
+        show = re.sub(r"\s\(\d+\)\s\(\d+\.\d+\)", "", item.show)
+        # Sin año:
+        #show = re.sub(r"\s\(\d+\)", "", item.show)
+        # Sin valoración:
+        #show = re.sub(r"\s\(\d+\.\d+\)", "", item.show)
+        itemlist.append( Item(channel='pordede', title="Añadir esta serie a la biblioteca de XBMC", url=item.url, action="add_serie_to_library", extra="episodios###", show=show) )
+        itemlist.append( Item(channel='pordede', title="Descargar todos los episodios de la serie", url=item.url, action="download_all_episodes", extra="episodios", show=show))
 
     return itemlist
 
