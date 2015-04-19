@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <version>
 	<name>newpct1</name>
-	<tag>7</tag>
-	<date>10/03/15</date>
-	<changes>Corregido BUG (lista vacia) en Buscar...</changes>
+	<tag>8</tag>
+	<date>19/04/15</date>
+	<changes>Añadido login by robalo</changes>
 </version>

@@ -77,6 +77,11 @@
     <setting id="stormtvuser" type="text" label="User"  enable="eq(-1,true)" default=""/>
     <setting id="stormtvpassword" type="text" option="hidden" label="Password" enable="!eq(-1,)+eq(-2,true)" default=""/>
 
+	<setting type="sep" />
+    <setting id="newpct1account" type="bool" label="Newpct1" default="false"/>
+    <setting id="newpct1user" type="text" label="User"  enable="eq(-1,true)" default=""/>
+    <setting id="newpct1password" type="text" option="hidden" label="Password" enable="!eq(-1,)+eq(-2,true)" default=""/>
+	
     <setting type="sep" />
     <setting id="megaspainaccount" type="bool" label="megaspain" default="false"/>
     <setting id="megaspainuser" type="text" label="User"  enable="eq(-1,true)" default=""/>
