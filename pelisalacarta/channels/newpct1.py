@@ -28,14 +28,34 @@ __creationdate__ = "20141102"
 def isGeneric():
     return True
 
+def openconfig(item):
+    if "xbmc" in config.get_platform() or "boxee" in config.get_platform():
+        config.open_settings( )
+    return []
+
+def login():
+    logger.info("[newpct1.py] login")
+
+    post = "usuario="+config.get_setting('newpct1user')+"&contraseña="+config.get_setting('newpct1password')+"&singin=on"
+
+    data = scrapertools.cache_page("http://www.newpct1.com/acceder",post=post)
+    if scrapertools.find_single_match(data,'<div id="men-user">')!='':
+        return True
+    
+    return False
+    
 def mainlist(item):
     logger.info("[newpct1.py] mainlist")
-        
     itemlist = []
+
+    ## Sólo sería necesario 'login' en findvideos para poder conseguir los enlaces a los vídeos. El que no esté registrado podrá ojear pero no podrá ver los vídeos
+    if config.get_setting("newpct1account")!="true":
+        itemlist.append( Item( channel=__channel__ , title="Habilita tu cuenta para poder ver los enlaces a los vídeos..." , action="openconfig" , url="" , folder=False ) )
+    else:
+        login()
     itemlist.append( Item(channel=__channel__, action="submenu", title="Películas", url="http://www.newpct1.com/", extra="peliculas") )
     itemlist.append( Item(channel=__channel__, action="submenu", title="Series", url="http://www.newpct1.com/", extra="series") )
     itemlist.append( Item(channel=__channel__, action="search", title="Buscar") )
-    
     return itemlist
 
 def search(item,texto):
