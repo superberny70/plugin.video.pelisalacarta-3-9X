@@ -341,16 +341,22 @@ def play(item):
 #Función para añadir una serie a la Libreria:----------->OK
 def add_serie_to_library(item):
   channelmodule = ImportarCanal(item.channel)
-  if item.extra: action = item.extra
-  if item.refered_action: action = item.refered_action
+  if item.extra: 
+    action = item.extra
+  elif item.refered_action: 
+    action = item.refered_action
   if "###" in action:
-      action = action.split("###")[0]
-      item.extra = action.split("###")[1]
+    item.extra = action.split("###")[1]
+    action = action.split("###")[0]
+      
   exec "itemlist = channelmodule."+action+"(item)"
+  library.GuardarSerie (itemlist)
+  '''
   for item in itemlist:
     if item.action!="add_serie_to_library" and item.action!="download_all_episodes":
+        item.category='Series'
         library.Guardar(item)
-  library.ActualizarBiblioteca(item)   
+  library.ActualizarBiblioteca(item)   '''
 
 
 
