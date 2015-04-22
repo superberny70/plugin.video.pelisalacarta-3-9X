@@ -35,6 +35,7 @@ def run():
     if type(itemlist)==list:  #Utilizado para no devolver ningun Item en funciones que no tienen que devolver nada (p.e play)
       MostrarResultado(itemlist, item)
       
+      
 
 #Sección encargada de recoger el Item y ejecutar su accion:----------->OK
 def EjecutarFuncion(item):
@@ -153,7 +154,8 @@ def EjecutarFuncion(item):
 
 # Funcion para Mostrar los resultados en XBMC:----------->OK
 def MostrarResultado(itemlist, refereditem):
-    logger.info("[launcher.py] - MostrarResultado")
+    logger.info("[launcher.py] - MostrarResultado")# + str(sys.argv))
+    
     Mostrar = True    
     for item in itemlist:
       #Funciones para "launcher", si un Item tiene función "launcher" no muestra los items, sino que ejecuta dicha funcion
@@ -167,7 +169,7 @@ def MostrarResultado(itemlist, refereditem):
       else:
         Mostrar = True
         AddItem(item, len(itemlist))
-
+    
     if Mostrar:         
       xbmcplugin.endOfDirectory( handle=int(sys.argv[1]), succeeded=True )
       if config.get_setting("forceview")=="true":
@@ -177,7 +179,6 @@ def MostrarResultado(itemlist, refereditem):
             xbmc.executebuiltin("Container.SetViewMode(503)")
         elif refereditem.viewmode=="movie":
             xbmc.executebuiltin("Container.SetViewMode(500)")
-
 
 
 #Funcion especifica para importar el canal:----------->OK
@@ -238,6 +239,7 @@ def ActualizarServers(Texto="Servidores actualizados con exíto"):
 
 #Seccion encargada de añadir un Item al Listitem:----------->OK
 def AddItem(item, totalitems):
+    #logger.info("[launcher.py] - AddItem " + str(sys.argv))
     titulo = item.title
     import time   
     if item.duration:
@@ -281,7 +283,6 @@ def AddItem(item, totalitems):
       if config.get_setting("player_mode")=="1": # SetResolvedUrl debe ser siempre "isPlayable = true"
         listitem.setProperty('IsPlayable', 'true')
       xbmcplugin.addDirectoryItem( handle = int(sys.argv[1]), url = ConstruirURL(item) , listitem=listitem, isFolder=False, totalItems=totalitems)
-
 
 # Crea le url con el item serializado:----------->OK
 def ConstruirURL(item):
@@ -348,7 +349,7 @@ def add_serie_to_library(item):
   if "###" in action:
     item.extra = action.split("###")[1]
     action = action.split("###")[0]
-      
+  
   exec "itemlist = channelmodule."+action+"(item)"
   library.GuardarSerie (itemlist)
   '''

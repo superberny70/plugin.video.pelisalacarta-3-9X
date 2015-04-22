@@ -47,7 +47,6 @@ def GuardarSerie(itemlist):
     pDialog.update(0, 'Añadiendo episodio...')
     totalepisodes = len(itemlist)
     i = 0
-
     for item in itemlist:
         i = i + 1
         pDialog.update(i*100/totalepisodes, 'Añadiendo episodio...',item.title)
@@ -83,13 +82,13 @@ def Guardar(item):
         if not os.path.exists(CarpetaSerie.decode("utf8")): os.mkdir(CarpetaSerie.decode("utf8"))
         
         from  core import scrapertools
-        Archivo = os.path.join(CarpetaSerie,scrapertools.get_season_and_episode(LimpiarNombre(item.title + ".strm")))  
+        Archivo = os.path.join(CarpetaSerie,scrapertools.get_season_and_episode(LimpiarNombre(item.title ))+ ".strm")  
     else: 
         category = "Cine"
         Archivo = os.path.join(MOVIES_PATH, LimpiarNombre(item.title + ".strm"))
         
-    item.channel="library"
-    item.extra =Archivo
+    #item.channel="library"
+    #item.extra =Archivo
     logger.info("-----------------------------------------------------------------------")
     logger.info("Guardando en la Libreria: " + Archivo)
     logger.info(item.tostring())
@@ -98,14 +97,9 @@ def Guardar(item):
     
     LIBRARYfile = open(Archivo.decode("utf8") ,"w")
     from platformcode.xbmc import launcher
-    #LIBRARYfile.write(launcher.ConstruirURL(item))
-    addon_name="plugin://plugin.video.pelisalacarta/"
-    itemurl = '%s?channel=%s&action=%s&category=%s&title=%s&url=%s&thumbnail=%s&plot=%s&server=%s&subtitle=%s&extra=%s' % ( addon_name , item.channel , item.action , urllib.quote_plus( item.category ) , urllib.quote_plus( item.title ) , urllib.quote_plus( item.url ) , "" , "" , item.server , urllib.quote_plus(item.subtitle) , urllib.quote_plus(item.extra) )
-    LIBRARYfile.write(itemurl)
+    LIBRARYfile.write(launcher.ConstruirURL(item))
     LIBRARYfile.flush()
     LIBRARYfile.close()
-    #xbmcgui.Dialog().ok(config.get_localized_string(30101) , item.title , config.get_localized_string(30135)) # 'Se ha añadido a la Biblioteca'
-    #xbmcgui.Dialog().notification(config.get_localized_string(30101),item.title +'\n'+ config.get_localized_string(30135),xbmcgui.NOTIFICATION_INFO)
     return True
 
 def Borrar(item):
