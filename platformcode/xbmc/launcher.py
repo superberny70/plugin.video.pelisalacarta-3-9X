@@ -35,6 +35,7 @@ def run():
     if type(itemlist)==list:  #Utilizado para no devolver ningun Item en funciones que no tienen que devolver nada (p.e play)
       MostrarResultado(itemlist, item)
       
+      
 
 #Sección encargada de recoger el Item y ejecutar su accion:----------->OK
 def EjecutarFuncion(item):
@@ -44,6 +45,13 @@ def EjecutarFuncion(item):
     logger.info("-----------------------------------------------------------------------")
     itemlist = []
 
+    if item.folder ==True and "strm" in item.extra:
+      listitem = xbmcgui.ListItem( item.title, iconImage="DefaultVideo.png", thumbnailImage=item.thumbnail)
+      xbmcplugin.setResolvedUrl(int(sys.argv[ 1 ]),False,listitem)
+      item.extra =""
+      xbmc.executebuiltin("Container.Update("+ConstruirURL(item)+")")
+      return
+    
     #Si la acción es mainlist comprueba si hay actualizaciónes para el canal antes de cargarlo.
     if item.action == "mainlist":
         if item.channel=="channelselector":
@@ -159,7 +167,8 @@ def EjecutarFuncion(item):
 
 # Funcion para Mostrar los resultados en XBMC:----------->OK
 def MostrarResultado(itemlist, refereditem):
-    logger.info("[launcher.py] - MostrarResultado")
+    logger.info("[launcher.py] - MostrarResultado")# + str(sys.argv))
+    
     Mostrar = True    
     for item in itemlist:
       #Funciones para "launcher", si un Item tiene función "launcher" no muestra los items, sino que ejecuta dicha funcion
@@ -173,7 +182,7 @@ def MostrarResultado(itemlist, refereditem):
       else:
         Mostrar = True
         AddItem(item, len(itemlist))
-
+    
     if Mostrar:         
       xbmcplugin.endOfDirectory( handle=int(sys.argv[1]), succeeded=True )
       if config.get_setting("forceview")=="true":
@@ -183,7 +192,6 @@ def MostrarResultado(itemlist, refereditem):
             xbmc.executebuiltin("Container.SetViewMode(503)")
         elif refereditem.viewmode=="movie":
             xbmc.executebuiltin("Container.SetViewMode(500)")
-
 
 
 #Funcion especifica para importar el canal:----------->OK
@@ -263,6 +271,7 @@ def modificar_password(item):
   
 #Seccion encargada de añadir un Item al Listitem:----------->OK
 def AddItem(item, totalitems):
+    #logger.info("[launcher.py] - AddItem " + str(sys.argv))
     titulo = item.title
     import time   
     if item.duration:
@@ -306,7 +315,6 @@ def AddItem(item, totalitems):
       if config.get_setting("player_mode")=="1": # SetResolvedUrl debe ser siempre "isPlayable = true"
         listitem.setProperty('IsPlayable', 'true')
       xbmcplugin.addDirectoryItem( handle = int(sys.argv[1]), url = ConstruirURL(item) , listitem=listitem, isFolder=False, totalItems=totalitems)
-
 
 # Crea le url con el item serializado:----------->OK
 def ConstruirURL(item):
@@ -366,16 +374,22 @@ def play(item):
 #Función para añadir una serie a la Libreria:----------->OK
 def add_serie_to_library(item):
   channelmodule = ImportarCanal(item.channel)
-  if item.extra: action = item.extra
-  if item.refered_action: action = item.refered_action
+  if item.extra: 
+    action = item.extra
+  elif item.refered_action: 
+    action = item.refered_action
   if "###" in action:
-      action = action.split("###")[0]
-      item.extra = action.split("###")[1]
+    item.extra = action.split("###")[1]
+    action = action.split("###")[0]
+  
   exec "itemlist = channelmodule."+action+"(item)"
+  library.GuardarSerie (itemlist)
+  '''
   for item in itemlist:
     if item.action!="add_serie_to_library" and item.action!="download_all_episodes":
+        item.category='Series'
         library.Guardar(item)
-  library.ActualizarBiblioteca(item)   
+  library.ActualizarBiblioteca(item)   '''
 
 
 

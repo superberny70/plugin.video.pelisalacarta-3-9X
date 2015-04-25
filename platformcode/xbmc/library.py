@@ -40,13 +40,41 @@ def LimpiarNombre(nombre):
   deletechars = '\\/:*"<>|?' #Caracteres no váidos en nombres de archivo
   return string.translate(nombre,allchars,deletechars)
     
-     
+def GuardarSerie(itemlist):
+    # Progreso
+    pDialog = xbmcgui.DialogProgress()
+    ret = pDialog.create('pelisalacarta', 'Añadiendo episodios...')
+    pDialog.update(0, 'Añadiendo episodio...')
+    totalepisodes = len(itemlist)
+    i = 0
+    for item in itemlist:
+        i = i + 1
+        pDialog.update(i*100/totalepisodes, 'Añadiendo episodio...',item.title)
+        item.category='Series'
+        if (pDialog.iscanceled()):
+            return
+        if item.action!="add_serie_to_library" and item.action!="download_all_episodes": 
+            Guardar(item)      
+    pDialog.close()
+    
+    #Lista con series para actualizar
+    nombre_fichero_config_canal = os.path.join( config.get_library_path() , "series.xml" )
+    if not os.path.exists(nombre_fichero_config_canal):
+        nombre_fichero_config_canal = os.path.join( config.get_data_path() , "series.xml" )
+
+    #logger.info("nombre_fichero_config_canal="+nombre_fichero_config_canal)
+    XMLfile= open(nombre_fichero_config_canal.decode("utf8") ,"a")
+    XMLfile.write(LimpiarNombre(item.show)+","+item.url+","+item.channel+"\n")
+    XMLfile.flush()
+    XMLfile.close()
+    
+    ActualizarBiblioteca(item)
+    
+
 def Guardar(item):
     logger.info("[library.py] Guardar")
-    if item.category != "Series": item.category = "Cine"  
-    if item.category == "Cine":
-        Archivo = os.path.join(MOVIES_PATH, LimpiarNombre(item.title + ".strm"))
-    elif item.category == "Series":
+      
+    if item.category == "Series":
         if item.show == "": 
             CarpetaSerie = os.path.join(SERIES_PATH, "Serie_sin_titulo")
         else:
@@ -54,9 +82,12 @@ def Guardar(item):
         if not os.path.exists(CarpetaSerie.decode("utf8")): os.mkdir(CarpetaSerie.decode("utf8"))
         
         from  core import scrapertools
-        Archivo = os.path.join(CarpetaSerie,scrapertools.get_season_and_episode(LimpiarNombre(item.title + ".strm")))  
-  
-    item.channel="library"
+        Archivo = os.path.join(CarpetaSerie,scrapertools.get_season_and_episode(LimpiarNombre(item.title ))+ ".strm")  
+    else: 
+        category = "Cine"
+        Archivo = os.path.join(MOVIES_PATH, LimpiarNombre(item.title + ".strm"))
+        
+    if item.action == "play": item.channel="library"
     item.extra =Archivo
     logger.info("-----------------------------------------------------------------------")
     logger.info("Guardando en la Libreria: " + Archivo)
@@ -69,8 +100,6 @@ def Guardar(item):
     LIBRARYfile.write(launcher.ConstruirURL(item))
     LIBRARYfile.flush()
     LIBRARYfile.close()
-    xbmcgui.Dialog().ok(config.get_localized_string(30101) , item.title , config.get_localized_string(30135)) # 'Se ha añadido a la Biblioteca'
-    
     return True
 
 def Borrar(item):
