@@ -87,8 +87,8 @@ def Guardar(item):
         category = "Cine"
         Archivo = os.path.join(MOVIES_PATH, LimpiarNombre(item.title + ".strm"))
         
-    #item.channel="library"
-    #item.extra =Archivo
+    if item.action == "play": item.channel="library"
+    item.extra =Archivo
     logger.info("-----------------------------------------------------------------------")
     logger.info("Guardando en la Libreria: " + Archivo)
     logger.info(item.tostring())

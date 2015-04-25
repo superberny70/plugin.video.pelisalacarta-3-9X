@@ -45,6 +45,13 @@ def EjecutarFuncion(item):
     logger.info("-----------------------------------------------------------------------")
     itemlist = []
 
+    if item.folder ==True and "strm" in item.extra:
+      listitem = xbmcgui.ListItem( item.title, iconImage="DefaultVideo.png", thumbnailImage=item.thumbnail)
+      xbmcplugin.setResolvedUrl(int(sys.argv[ 1 ]),False,listitem)
+      item.extra =""
+      xbmc.executebuiltin("Container.Update("+ConstruirURL(item)+")")
+      return
+    
     #Si la acción es mainlist comprueba si hay actualizaciónes para el canal antes de cargarlo.
     if item.action == "mainlist":
         if item.channel=="channelselector":
