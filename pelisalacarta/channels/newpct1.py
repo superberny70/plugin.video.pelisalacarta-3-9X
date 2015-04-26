@@ -21,7 +21,7 @@ __type__ = "generic"
 __title__ = "Newpct1"
 __channel__ = "newpct1"
 __adult__ = "false"
-__thumbnail__ = ""
+__thumbnail__ = "http://s3.postimg.org/c7oceldcz/logof.jpg"
 __language__ = "ES"
 __creationdate__ = "20141102"
 
@@ -34,25 +34,30 @@ def openconfig(item):
     return []
 
 def login():
-    logger.info("[newpct1.py] login")
-
-    post = "usuario="+config.get_setting('newpct1user')+"&contraseña="+config.get_setting('newpct1password')+"&singin=on"
-
+    post ="sector=login&usuario="+config.get_setting('newpct1user')+"&contrase%F1a="+config.get_setting('newpct1password')+"&singin=on"
     data = scrapertools.cache_page("http://www.newpct1.com/acceder",post=post)
     if scrapertools.find_single_match(data,'<div id="men-user">')!='':
+        logger.info("[newpct1.py] login True")
         return True
-    
+        
+    logger.info("[newpct1.py] login False")
+    return False
+        
+def logout():
+    #Solo para debugear
+    data=scrapertools.cache_page("http://www.newpct1.com/salir")
+    if scrapertools.find_single_match(data,'<div id="men-user">')=='':
+        logger.info("[newpct1.py] logout True")
+        return True
+        
+    logger.info("[newpct1.py] logout False")
     return False
     
 def mainlist(item):
     logger.info("[newpct1.py] mainlist")
     itemlist = []
-
-    ## Sólo sería necesario 'login' en findvideos para poder conseguir los enlaces a los vídeos. El que no esté registrado podrá ojear pero no podrá ver los vídeos
-    if config.get_setting("newpct1account")!="true":
-        itemlist.append( Item( channel=__channel__ , title="Habilita tu cuenta para poder ver los enlaces a los vídeos..." , action="openconfig" , url="" , folder=False ) )
-    else:
-        login()
+    
+    #logout()
     itemlist.append( Item(channel=__channel__, action="submenu", title="Películas", url="http://www.newpct1.com/", extra="peliculas") )
     itemlist.append( Item(channel=__channel__, action="submenu", title="Series", url="http://www.newpct1.com/", extra="series") )
     itemlist.append( Item(channel=__channel__, action="search", title="Buscar") )
@@ -348,8 +353,13 @@ def buscar_en_subcategoria(titulo, categoria):
     
 def findvideos(item):
     logger.info("[newpct1.py] findvideos")
-    itemlist=[]
-
+    itemlist=[]   
+    
+    ## Sólo sería necesario 'login' en findvideos para poder conseguir los enlaces a los vídeos. El que no esté registrado podrá ojear pero no podrá ver los vídeos
+    if config.get_setting("newpct1account")!="true":
+        itemlist.append( Item( channel=__channel__ , title="Habilita tu cuenta para poder ver los enlaces a los vídeos..." , action="openconfig" , url="" , folder=False ) )
+        return itemlist
+        
     ## Cualquiera de las tres opciones son válidas
     #item.url = item.url.replace("1.com/","1.com/ver-online/")
     #item.url = item.url.replace("1.com/","1.com/descarga-directa/")
@@ -358,7 +368,13 @@ def findvideos(item):
     # Descarga la página
     data = re.sub(r"\n|\r|\t|\s{2}|(<!--.*?-->)","",scrapertools.cache_page(item.url))
     data = unicode( data, "iso-8859-1" , errors="replace" ).encode("utf-8")
-
+    
+    if scrapertools.find_single_match(data,'<div id="men-user">')=='':
+        # Si no estamos longeados, nos longeamos y volvemos a leer la pagina
+        login()
+        data = re.sub(r"\n|\r|\t|\s{2}|(<!--.*?-->)","",scrapertools.cache_page(item.url))
+        data = unicode( data, "iso-8859-1" , errors="replace" ).encode("utf-8")
+    
     title = scrapertools.find_single_match(data,"<h1><strong>([^<]+)</strong>[^<]+</h1>")
     title+= scrapertools.find_single_match(data,"<h1><strong>[^<]+</strong>([^<]+)</h1>")
     caratula = scrapertools.find_single_match(data,'<div class="entry-left">.*?src="([^"]+)"')
