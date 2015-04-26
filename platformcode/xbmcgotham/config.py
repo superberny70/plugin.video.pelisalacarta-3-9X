@@ -42,12 +42,21 @@ def open_settings():
     __settings__.openSettings()
 
 def get_setting(name):
-    dev = __settings__.getSetting( name )
+    if name == "enableadultmode": #control parental
+         dev = str(__settings__.getSetting( 'adultpassword_introducida') == __settings__.getSetting( 'adultpassword_guardada')).lower()
+    else:
+        dev = __settings__.getSetting( name )
     
     return dev
 
 def set_setting(name,value):
-    __settings__.setSetting( name,value )
+    if name == "enableadultmode": #control parental
+         if value.lower() =='true':
+            __settings__.setSetting( 'adultpassword_introducida',__settings__.getSetting( 'adultpassword_guardada') )
+         else:
+            __settings__.setSetting( 'adultpassword_introducida','' )
+    else:
+        __settings__.setSetting( name,value )
 
 def get_localized_string(code):
     dev = __language__(code)

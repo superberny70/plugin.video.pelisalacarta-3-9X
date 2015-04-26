@@ -76,7 +76,7 @@ def channels_list(category='*'):
     
     itemlist = []
     if category=='*': 
-        itemlist.append( Item( viewmode="movie", title="Tengo una URL", channel="tengourl", language="", category="F,S,D,A", type="generic"))
+        itemlist.append( Item( viewmode="movie", title="Tengo una URL", channel="tengourl", action='mainlist',language="", category="F,S,D,A", type="generic"))
     if config.get_setting("personalchannel")=="true":
         itemlist.append( Item( title=config.get_setting("personalchannelname"), channel="personal", action='mainlist', language="", category="*", type="generic",thumbnail= config.get_setting("personalchannellogo")))
     if config.get_setting("personalchannel2")=="true":
