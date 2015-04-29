@@ -72,6 +72,32 @@ def GuardarSerie(itemlist):
     
     ActualizarBiblioteca(item)
     
+def AddCapitulos(itemlist):
+    #itemlist contiene todos los capitulos de una serie
+    logger.info("[library.py] AddCapitulos")
+    
+    CarpetaSerie = os.path.join(SERIES_PATH, LimpiarNombre(itemlist[0].show))
+    if os.path.exists(CarpetaSerie.decode("utf8")):
+        #obtener los capitulos guardados 
+        lista_capitulos= os.listdir(CarpetaSerie)
+        lista_capitulos= [os.path.basename(c) for c in lista_capitulos if c.endswith('.strm')]
+        
+        #obtener capitulos disponibles y guardarlos si no lo estan ya
+        for item in itemlist:
+            if item.action!="add_serie_to_library" and item.action!="download_all_episodes":
+                capitulo= scrapertools.get_season_and_episode(LimpiarNombre(item.title ))+ ".strm"
+                if capitulo not in lista_capitulos:
+                    item.category='Series'
+                    item.action= 'play_from_library'
+                    Guardar(item)
+                    #print "Guardar " + capitulo
+    
+        
+        
+        
+        
+    else:
+        logger.info("[library.py] AddCapitulos Error: No existe el directorio " + CarpetaSerie)
 
 def Guardar(item):
     logger.info("[library.py] Guardar")
@@ -83,7 +109,6 @@ def Guardar(item):
             CarpetaSerie = os.path.join(SERIES_PATH, LimpiarNombre(item.show))
         if not os.path.exists(CarpetaSerie.decode("utf8")): os.mkdir(CarpetaSerie.decode("utf8"))
         
-        from  core import scrapertools
         Archivo = os.path.join(CarpetaSerie,scrapertools.get_season_and_episode(LimpiarNombre(item.title ))+ ".strm")  
     else: 
         category = "Cine"

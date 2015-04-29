@@ -15,18 +15,15 @@ from core.item import Item
 from servers import servertools
 
 logger.info("[library_service.py] Actualizando series...")
+import time
+Inicio = time.time()
+
 from platformcode.xbmc import library
 from platformcode.xbmc import launcher
 import xbmcgui
-
-#Eliminar carpeta antes de actualizar
-    
+  
 directorio = os.path.join(config.get_library_path(),"SERIES")
 logger.info ("directorio="+directorio)
-import shutil
-
-#if os.path.exists(directorio):
-#    shutil.rmtree(directorio)
 
 if not os.path.exists(directorio):
     os.mkdir(directorio)
@@ -55,7 +52,7 @@ try:
                     # han de tener una funcion llamada 'episodios(item)' que retorna el listado de capitulos
                     exec "import pelisalacarta.channels."+ serie[2].strip() +" as channel"
                     itemlist = channel.episodios(item)
-                        
+                    library.AddCapitulos(itemlist)
                 except:
                     import traceback
                     from pprint import pprint
@@ -70,7 +67,7 @@ try:
                 logger.info("[library_service.py] No actualiza "+serie[0]+" (no existe el directorio)")
                 itemlist=[]
 
-            for item in itemlist:
+            '''for item in itemlist:
                 #logger.info("item="+item.tostring())
                 try:
                     if item.action!="add_serie_to_library" and item.action!="download_all_episodes":
@@ -79,7 +76,7 @@ try:
                         item.action="play_from_library"
                         library.Guardar(item)
                 except:
-                    logger.info("[library_service.py] Capitulo no valido")
+                    logger.info("[library_service.py] Capitulo no valido")'''
 
         import xbmc
         xbmc.executebuiltin('UpdateLibrary(video)')
@@ -88,3 +85,5 @@ try:
 
 except:
     logger.info("[library_service.py] No hay series para actualizar")
+
+logger.info("[library_service.py] Tiempo empleado: " + str(time.time()-Inicio))
