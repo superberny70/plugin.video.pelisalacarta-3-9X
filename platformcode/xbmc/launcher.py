@@ -44,14 +44,14 @@ def EjecutarFuncion(item):
     logger.info("EjecutarFuncion: Canal=" + item.channel + " Acción=" + item.action)    
     logger.info("-----------------------------------------------------------------------")
     itemlist = []
-
+    '''
     if item.folder ==True and "strm" in item.extra:
       listitem = xbmcgui.ListItem( item.title, iconImage="DefaultVideo.png", thumbnailImage=item.thumbnail)
       xbmcplugin.setResolvedUrl(int(sys.argv[ 1 ]),False,listitem)
       item.extra =""
       xbmc.executebuiltin("Container.Update("+ConstruirURL(item)+")")
       return
-    
+    '''
     #Si la acción es mainlist comprueba si hay actualizaciónes para el canal antes de cargarlo.
     if item.action == "mainlist":
         if item.channel=="channelselector":
@@ -318,7 +318,8 @@ def AddItem(item, totalitems):
 
 # Crea le url con el item serializado:----------->OK
 def ConstruirURL(item):
-  itemurl = sys.argv[ 0 ] + "?" + item.serialize()
+  #itemurl = sys.argv[ 0 ] + "?" + item.serialize()
+  itemurl = "plugin://plugin.video.pelisalacarta/?" + item.serialize()
   return itemurl
 
 
@@ -384,14 +385,44 @@ def add_serie_to_library(item):
   
   exec "itemlist = channelmodule."+action+"(item)"
   library.GuardarSerie (itemlist)
-  '''
-  for item in itemlist:
-    if item.action!="add_serie_to_library" and item.action!="download_all_episodes":
-        item.category='Series'
-        library.Guardar(item)
-  library.ActualizarBiblioteca(item)   '''
 
+def play_from_library(item):
+    logger.info("[launcher.py] play_from_library")
+    elegido = Item(url="")
+    channelmodule = ImportarCanal(item.channel)
+    if hasattr(channelmodule, 'findvideos'):
+        itemlist = channelmodule.findvideos(item)
+    else:
+        itemlist= findvideos(item)
+    
+    if len(itemlist)>0:
+        #Mostrar cuadro de seleccion de servers
+        opciones = []
+        for item in itemlist:
+            opciones.append(item.title)
+    
+        import xbmcgui
+        dia = xbmcgui.Dialog()
+        seleccion = dia.select(config.get_localized_string(30163), opciones)
+        elegido = itemlist[seleccion]
 
+        if seleccion==-1:
+            return
+    else:
+        elegido = item
+    
+    if hasattr(channelmodule, 'play'):
+      logger.info("[launcher.py] executing channel 'play' method")
+      logger.info(channelmodule.__file__)
+      itemlist = channelmodule.play(elegido)
+      elegido= itemlist[0]
+    else:
+      logger.info("[launcher.py] no channel 'play' method, executing core method")
+    
+    elegido.channel= 'library'
+    play(elegido)
+      
+    
 
 #Función para descargar todos los episodios de una serie:----------->OK
 def download_all_episodes(item):
@@ -583,10 +614,13 @@ def MenuVideo(item):
 def MostrarMenuVideo(item,itemlist):
     opciones = []
     Reproducible = False
+    video_urls=0
     seleccion = -1
     for itemopcion in itemlist:
       opciones.append(itemopcion.title)
-      if itemopcion.action=="play": Reproducible = True
+      if itemopcion.action=="play_video": 
+        Reproducible = True
+        video_urls+=1
 
     if len(opciones)>0:    
       default_action = config.get_setting("default_action")
@@ -595,10 +629,10 @@ def MostrarMenuVideo(item,itemlist):
       elif default_action=="1": #Ver en Calidad Baja
           seleccion = 0
       elif default_action=="2": #Ver en Calidad Alta
-          seleccion = len(video_urls)-1
+          seleccion = video_urls -1
       elif default_action=="3": #Mandar a jDownloader
         if config.get_setting("jdownloader_enabled")=="true":
-          seleccion = opciones.index(OpcionesDisponibles[10])
+          seleccion = opciones.index(config.get_localized_string(30158)) #"Enviar a JDownloader"
       else:
           seleccion=0
     return seleccion

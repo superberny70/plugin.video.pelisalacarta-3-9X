@@ -42,7 +42,7 @@ try:
         
         for serie in config_canal.readlines():
             logger.info("[library_service.py] serie="+serie)
-            serie = serie.split(",")
+            serie = serie.split("|")
         
             ruta = os.path.join( config.get_library_path() , "SERIES" , serie[0] )
             logger.info("[library_service.py] ruta =#"+ruta+"#")
@@ -73,8 +73,11 @@ try:
             for item in itemlist:
                 #logger.info("item="+item.tostring())
                 try:
-                    item.show=serie[0].strip()
-                    library.savelibrary( titulo=item.title , url=item.url , thumbnail=item.thumbnail , server=item.server , plot=item.plot , canal=item.channel , category="Series" , Serie=item.show , verbose=False, accion="play_from_library", pedirnombre=False, subtitle=item.subtitle )
+                    if item.action!="add_serie_to_library" and item.action!="download_all_episodes":
+                        item.show=serie[0].strip()
+                        item.category="Series"
+                        item.action="play_from_library"
+                        library.Guardar(item)
                 except:
                     logger.info("[library_service.py] Capitulo no valido")
 

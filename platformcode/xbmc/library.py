@@ -50,10 +50,12 @@ def GuardarSerie(itemlist):
     for item in itemlist:
         i = i + 1
         pDialog.update(i*100/totalepisodes, 'Añadiendo episodio...',item.title)
-        item.category='Series'
+        
         if (pDialog.iscanceled()):
             return
         if item.action!="add_serie_to_library" and item.action!="download_all_episodes": 
+            item.category='Series'
+            item.action= 'play_from_library'
             Guardar(item)      
     pDialog.close()
     
@@ -64,7 +66,7 @@ def GuardarSerie(itemlist):
 
     #logger.info("nombre_fichero_config_canal="+nombre_fichero_config_canal)
     XMLfile= open(nombre_fichero_config_canal.decode("utf8") ,"a")
-    XMLfile.write(LimpiarNombre(item.show)+","+item.url+","+item.channel+"\n")
+    XMLfile.write(LimpiarNombre(item.show)+"|"+item.url+"|"+item.channel+"\n")
     XMLfile.flush()
     XMLfile.close()
     
@@ -73,7 +75,7 @@ def GuardarSerie(itemlist):
 
 def Guardar(item):
     logger.info("[library.py] Guardar")
-      
+    
     if item.category == "Series":
         if item.show == "": 
             CarpetaSerie = os.path.join(SERIES_PATH, "Serie_sin_titulo")
@@ -87,7 +89,9 @@ def Guardar(item):
         category = "Cine"
         Archivo = os.path.join(MOVIES_PATH, LimpiarNombre(item.title + ".strm"))
         
-    if item.action == "play": item.channel="library"
+    if item.action == "play": 
+        item.channel="library"
+        
     item.extra =Archivo
     logger.info("-----------------------------------------------------------------------")
     logger.info("Guardando en la Libreria: " + Archivo)
