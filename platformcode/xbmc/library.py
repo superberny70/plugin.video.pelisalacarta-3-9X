@@ -36,6 +36,7 @@ def isGeneric():
     return True
 
 def LimpiarNombre(nombre):
+  nombre=nombre.strip()
   allchars = string.maketrans('', '')
   deletechars = '\\/:*"<>|?' #Caracteres no váidos en nombres de archivo
   return string.translate(nombre,allchars,deletechars)
@@ -50,30 +51,53 @@ def GuardarSerie(itemlist):
     for item in itemlist:
         i = i + 1
         pDialog.update(i*100/totalepisodes, 'Añadiendo episodio...',item.title)
-        item.category='Series'
+        
         if (pDialog.iscanceled()):
             return
         if item.action!="add_serie_to_library" and item.action!="download_all_episodes": 
+            item.category='Series'
+            item.action= 'play_from_library'
             Guardar(item)      
     pDialog.close()
     
     #Lista con series para actualizar
-    nombre_fichero_config_canal = os.path.join( config.get_library_path() , "series.xml" )
-    if not os.path.exists(nombre_fichero_config_canal):
-        nombre_fichero_config_canal = os.path.join( config.get_data_path() , "series.xml" )
+    nombre_fichero_listado_series = os.path.join( config.get_library_path() , "series.xml" )
+    if not os.path.exists(nombre_fichero_listado_series):
+        nombre_fichero_listado_series = os.path.join( config.get_data_path() , "series.xml" )
 
-    #logger.info("nombre_fichero_config_canal="+nombre_fichero_config_canal)
-    XMLfile= open(nombre_fichero_config_canal.decode("utf8") ,"a")
-    XMLfile.write(LimpiarNombre(item.show)+","+item.url+","+item.channel+"\n")
-    XMLfile.flush()
-    XMLfile.close()
+    #logger.info("nombre_fichero_listado_series="+nombre_fichero_listado_series)
+    fichero_listado_series= open(nombre_fichero_listado_series.decode("utf8") ,"a")
+    fichero_listado_series.write(LimpiarNombre(item.show)+"|"+item.url+"|"+item.channel+"\n")
+    fichero_listado_series.flush()
+    fichero_listado_series.close()
     
     ActualizarBiblioteca(item)
     
+def AddCapitulos(itemlist):
+    #itemlist contiene todos los capitulos de una serie
+    logger.info("[library.py] AddCapitulos")
+    
+    CarpetaSerie = os.path.join(SERIES_PATH, LimpiarNombre(itemlist[0].show))
+    if os.path.exists(CarpetaSerie.decode("utf8")):
+        #obtener los capitulos guardados 
+        lista_capitulos= os.listdir(CarpetaSerie)
+        lista_capitulos= [os.path.basename(c) for c in lista_capitulos if c.endswith('.strm')]
+        
+        #obtener capitulos disponibles y guardarlos si no lo estan ya
+        for item in itemlist:
+            if item.action!="add_serie_to_library" and item.action!="download_all_episodes":
+                capitulo= scrapertools.get_season_and_episode(LimpiarNombre(item.title ))+ ".strm"
+                if capitulo not in lista_capitulos:
+                    item.category='Series'
+                    item.action= 'play_from_library'
+                    Guardar(item)            
+    else:
+        logger.info("[library.py] AddCapitulos Error: No existe el directorio " + CarpetaSerie)
 
+        
 def Guardar(item):
     logger.info("[library.py] Guardar")
-      
+    
     if item.category == "Series":
         if item.show == "": 
             CarpetaSerie = os.path.join(SERIES_PATH, "Serie_sin_titulo")
@@ -81,13 +105,14 @@ def Guardar(item):
             CarpetaSerie = os.path.join(SERIES_PATH, LimpiarNombre(item.show))
         if not os.path.exists(CarpetaSerie.decode("utf8")): os.mkdir(CarpetaSerie.decode("utf8"))
         
-        from  core import scrapertools
         Archivo = os.path.join(CarpetaSerie,scrapertools.get_season_and_episode(LimpiarNombre(item.title ))+ ".strm")  
     else: 
         category = "Cine"
-        Archivo = os.path.join(MOVIES_PATH, LimpiarNombre(item.title + ".strm"))
+        Archivo = os.path.join(MOVIES_PATH, LimpiarNombre(item.title) + ".strm")
         
-    if item.action == "play": item.channel="library"
+    if item.action == "play": 
+        item.channel="library"
+        
     item.extra =Archivo
     logger.info("-----------------------------------------------------------------------")
     logger.info("Guardando en la Libreria: " + Archivo)
