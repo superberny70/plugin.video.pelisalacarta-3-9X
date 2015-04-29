@@ -36,6 +36,7 @@ def isGeneric():
     return True
 
 def LimpiarNombre(nombre):
+  nombre=nombre.strip()
   allchars = string.maketrans('', '')
   deletechars = '\\/:*"<>|?' #Caracteres no váidos en nombres de archivo
   return string.translate(nombre,allchars,deletechars)
@@ -60,15 +61,15 @@ def GuardarSerie(itemlist):
     pDialog.close()
     
     #Lista con series para actualizar
-    nombre_fichero_config_canal = os.path.join( config.get_library_path() , "series.xml" )
-    if not os.path.exists(nombre_fichero_config_canal):
-        nombre_fichero_config_canal = os.path.join( config.get_data_path() , "series.xml" )
+    nombre_fichero_listado_series = os.path.join( config.get_library_path() , "series.xml" )
+    if not os.path.exists(nombre_fichero_listado_series):
+        nombre_fichero_listado_series = os.path.join( config.get_data_path() , "series.xml" )
 
-    #logger.info("nombre_fichero_config_canal="+nombre_fichero_config_canal)
-    XMLfile= open(nombre_fichero_config_canal.decode("utf8") ,"a")
-    XMLfile.write(LimpiarNombre(item.show)+"|"+item.url+"|"+item.channel+"\n")
-    XMLfile.flush()
-    XMLfile.close()
+    #logger.info("nombre_fichero_listado_series="+nombre_fichero_listado_series)
+    fichero_listado_series= open(nombre_fichero_listado_series.decode("utf8") ,"a")
+    fichero_listado_series.write(LimpiarNombre(item.show)+"|"+item.url+"|"+item.channel+"\n")
+    fichero_listado_series.flush()
+    fichero_listado_series.close()
     
     ActualizarBiblioteca(item)
     
@@ -89,16 +90,11 @@ def AddCapitulos(itemlist):
                 if capitulo not in lista_capitulos:
                     item.category='Series'
                     item.action= 'play_from_library'
-                    Guardar(item)
-                    #print "Guardar " + capitulo
-    
-        
-        
-        
-        
+                    Guardar(item)            
     else:
         logger.info("[library.py] AddCapitulos Error: No existe el directorio " + CarpetaSerie)
 
+        
 def Guardar(item):
     logger.info("[library.py] Guardar")
     
@@ -112,7 +108,7 @@ def Guardar(item):
         Archivo = os.path.join(CarpetaSerie,scrapertools.get_season_and_episode(LimpiarNombre(item.title ))+ ".strm")  
     else: 
         category = "Cine"
-        Archivo = os.path.join(MOVIES_PATH, LimpiarNombre(item.title + ".strm"))
+        Archivo = os.path.join(MOVIES_PATH, LimpiarNombre(item.title) + ".strm")
         
     if item.action == "play": 
         item.channel="library"
