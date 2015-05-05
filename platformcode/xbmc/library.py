@@ -76,6 +76,7 @@ def GuardarSerie(itemlist):
 def AddCapitulos(itemlist):
     #itemlist contiene todos los capitulos de una serie
     logger.info("[library.py] AddCapitulos")
+    nuevos=0
     
     CarpetaSerie = os.path.join(SERIES_PATH, LimpiarNombre(itemlist[0].show))
     if os.path.exists(CarpetaSerie.decode("utf8")):
@@ -90,10 +91,11 @@ def AddCapitulos(itemlist):
                 if capitulo not in lista_capitulos:
                     item.category='Series'
                     item.action= 'play_from_library'
+                    nuevos +=1
                     Guardar(item)            
     else:
         logger.info("[library.py] AddCapitulos Error: No existe el directorio " + CarpetaSerie)
-
+    return nuevos
         
 def Guardar(item):
     logger.info("[library.py] Guardar")

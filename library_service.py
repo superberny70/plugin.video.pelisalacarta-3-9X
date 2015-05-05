@@ -14,11 +14,12 @@ from core import logger
 from core.item import Item
 from servers import servertools
 from platformcode.xbmc import library
-from platformcode.xbmc import launcher
+
 
 
 def actualizarSerie(serie):    
     logger.info("[library_service.py] serie="+serie)
+    global lista_nuevos_capitulos
     serie = serie.split("|")
     
     if multihilo:
@@ -39,7 +40,7 @@ def actualizarSerie(serie):
             # han de tener una funcion llamada 'episodios(item)' que retorna el listado de capitulos
             exec "import pelisalacarta.channels."+ serie[2].strip() +" as channel"
             itemlist = channel.episodios(item)
-            library.AddCapitulos(itemlist)
+            lista_nuevos_capitulos.append(library.AddCapitulos(itemlist))
         except:
             import traceback
             from pprint import pprint
@@ -53,6 +54,7 @@ def actualizarSerie(serie):
     else:
         logger.info("[library_service.py] No actualiza "+serie[0]+" (no existe el directorio)")
         itemlist=[]
+ 
        
 
 
@@ -62,6 +64,7 @@ def actualizarSerie(serie):
 #############################################################
 logger.info("[library_service.py] Actualizando series...")
 Inicio = time.time() 
+lista_nuevos_capitulos = []
 
 try:
     if config.get_setting("updatelibrary")=="true":
@@ -90,9 +93,19 @@ try:
             for hilo in listahilos:
                 while hilo.isAlive():
                   time.sleep(0.5)
-
-        import xbmc
-        xbmc.executebuiltin('UpdateLibrary(video)')
+                  
+        total_nuevos_capitulos=0
+        for i in lista_nuevos_capitulos:
+            total_nuevos_capitulos+=i
+        
+        if total_nuevos_capitulos > 0:
+            if xbmcgui.Window(xbmcgui.getCurrentWindowId()).getProperty("updatelibrary2") != "disabled":
+                xbmcgui.Window(xbmcgui.getCurrentWindowId()).setProperty("updatelibrary2", "run")
+                xbmc.executebuiltin('UpdateLibrary(video)')
+                xbmcgui.Window(xbmcgui.getCurrentWindowId()).setProperty("updatelibrary2", "enabled")
+            else:
+                xbmcgui.Window(xbmcgui.getCurrentWindowId()).setProperty("updatelibrary2", "ready")
+                
     else:
         logger.info("No actualiza la biblioteca, está desactivado en la configuración de pelisalacarta")
 

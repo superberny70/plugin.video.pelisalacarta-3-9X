@@ -7,7 +7,7 @@
 
 #Imports:
 import urllib, urllib2
-import os,sys
+import os,sys, time
 import base64
 from core import logger
 from core import config
@@ -20,6 +20,7 @@ import xbmc
 import channelselector as channelselector
 from platformcode.xbmc import library
 
+xbmcgui.Window(xbmcgui.getCurrentWindowId()).setProperty("updatelibrary2", "enabled")
 
 #Funcion principal.----------->OK
 def run():
@@ -44,14 +45,7 @@ def EjecutarFuncion(item):
     logger.info("EjecutarFuncion: Canal=" + item.channel + " Acción=" + item.action)    
     logger.info("-----------------------------------------------------------------------")
     itemlist = []
-    '''
-    if item.folder ==True and "strm" in item.extra:
-      listitem = xbmcgui.ListItem( item.title, iconImage="DefaultVideo.png", thumbnailImage=item.thumbnail)
-      xbmcplugin.setResolvedUrl(int(sys.argv[ 1 ]),False,listitem)
-      item.extra =""
-      xbmc.executebuiltin("Container.Update("+ConstruirURL(item)+")")
-      return
-    '''
+    
     #Si la acción es mainlist comprueba si hay actualizaciónes para el canal antes de cargarlo.
     if item.action == "mainlist":
         if item.channel=="channelselector":
@@ -63,17 +57,51 @@ def EjecutarFuncion(item):
                 u'Puede descargar la versión oficial en http://blog.tvalacarta.info/plugin-xbmc/pelisalacarta/')
             
             config.set_setting('enableadultmode','false')
-            
+               
             if config.get_setting("updatecheck2")=="true": 
-                xbmcgui.Dialog().notification('Actualizaciones automaticas', 'Buscado nueva versión...', xbmcgui.NOTIFICATION_INFO ,1000)
+                #xbmcgui.Dialog().notification('Actualizaciones automaticas', 'Buscado nueva versión...', xbmcgui.NOTIFICATION_INFO ,1000)
                 itemlist.extend(ActualizarPlugin())
+            
             if config.get_setting("updatechannels")=="true" and len(itemlist)==0: # Si hay una nueva version del plugin no actualizar canales
-                xbmcgui.Dialog().notification('Actualizaciones automaticas', 'Buscado actualizaciones...', xbmcgui.NOTIFICATION_INFO ,1000)
-                itemlist.append(ActualizarCanal(item.channel,config.get_localized_string(30064)))
-                xbmcgui.Dialog().notification('Actualizaciones automaticas', 'Buscado actualizaciones de servidores...', xbmcgui.NOTIFICATION_INFO ,3000)
-                itemlist.append(ActualizarServers())
-                xbmcgui.Dialog().notification('Actualizaciones automaticas', 'Buscado nuevos canales...', xbmcgui.NOTIFICATION_INFO ,1000)
-                updater.sincronizar_canales()
+               
+                while xbmcgui.Window(xbmcgui.getCurrentWindowId()).getProperty("updatelibrary2")=="run": time.sleep(0.5) # Si se esta actualizando la libreria (library_service) esperar
+                xbmcgui.Window(xbmcgui.getCurrentWindowId()).setProperty("updatelibrary2", "disabled")
+                
+                Inicio = time.time() 
+                multihilo= (config.get_setting("multithread") !='false' ) #Por defecto esta activado
+                listahilos=[]
+                if multihilo:
+                    from threading import Thread
+                    Trd = Thread(target=ActualizarCanal,args=[item.channel,config.get_localized_string(30064)])
+                    listahilos.append(Trd)
+                    Trd.start()
+                    
+                    xbmcgui.Dialog().notification('Actualizaciones automaticas', 'Buscado nuevos canales...', xbmcgui.NOTIFICATION_INFO ,1000)
+                    Trd = Thread(target=updater.sincronizar_canales,args=[])
+                    listahilos.append(Trd)
+                    Trd.start()
+                    
+                    Trd = Thread(target=ActualizarServers,args=[])
+                    listahilos.append(Trd)
+                    Trd.start()
+                else:
+                    itemlist.append(ActualizarCanal(item.channel,config.get_localized_string(30064)))
+                    
+                    xbmcgui.Dialog().notification('Actualizaciones automaticas', 'Buscado nuevos canales...', xbmcgui.NOTIFICATION_INFO ,1000)
+                    updater.sincronizar_canales()
+                    
+                    itemlist.append(ActualizarServers())
+                    
+                if multihilo:
+                    #esperar a q todos los hilo acaben
+                    for hilo in listahilos:
+                        while hilo.isAlive():
+                          time.sleep(0.5)
+                          
+                if xbmcgui.Window(xbmcgui.getCurrentWindowId()).getProperty("updatelibrary2") =="ready": #Si se han añadido nuevos capitulos (library_service) , y no se ha hecho aun actualizar
+                    xbmc.executebuiltin('UpdateLibrary(video)')
+                xbmcgui.Window(xbmcgui.getCurrentWindowId()).setProperty("updatelibrary2", "enabled")
+             
         elif config.get_setting("updatechannels")=="true": 
             itemlist.append(ActualizarCanal(item.channel,"¡Canal descargado y actualizado!"))
         
@@ -210,6 +238,7 @@ def ImportarCanal(channel):
 
 #Sección encargada de comprobar la actualizacion de un canal:----------->OK
 def ActualizarCanal(channel, Texto="Actualizado con exíto"):
+  xbmcgui.Dialog().notification('Actualizaciones automaticas', 'Buscado actualizaciones...', xbmcgui.NOTIFICATION_INFO ,1000)  
   itemlist=[]
   try:
     logger.info("Verificando actualización de: " + channel)
@@ -224,6 +253,7 @@ def ActualizarCanal(channel, Texto="Actualizado con exíto"):
 
 #Sección encargada de comprobar las actualizaciones del plugin:----------->OK
 def ActualizarPlugin():
+  xbmcgui.Dialog().notification('Actualizaciones automaticas', 'Buscado nueva versión...', xbmcgui.NOTIFICATION_INFO ,1000)
   itemlist = []
   logger.info("[launcher.py] - ActualizarPlugin")
   try:
@@ -237,6 +267,7 @@ def ActualizarPlugin():
 
 #Sección encargada de comprobar las actualizaciones de los servers/conectores:----------->OK
 def ActualizarServers(Texto="Servidores actualizados con exíto"):
+  xbmcgui.Dialog().notification('Actualizaciones automaticas', 'Buscado actualizaciones de servidores...', xbmcgui.NOTIFICATION_INFO ,3000)
   itemlist=[]
   try:
     logger.info("Verificando actualización de conectores" )
@@ -272,8 +303,7 @@ def modificar_password(item):
 #Seccion encargada de añadir un Item al Listitem:----------->OK
 def AddItem(item, totalitems):
     #logger.info("[launcher.py] - AddItem " + str(sys.argv))
-    titulo = item.title
-    import time   
+    titulo = item.title   
     if item.duration:
       if item.duration > 3599: 
         Tiempo = time.strftime("%H:%M:%S", time.gmtime(item.duration))
