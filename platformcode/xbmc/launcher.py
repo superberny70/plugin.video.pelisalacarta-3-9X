@@ -67,7 +67,7 @@ def EjecutarFuncion(item):
                 while xbmcgui.Window(xbmcgui.getCurrentWindowId()).getProperty("updatelibrary2")=="run": time.sleep(0.5) # Si se esta actualizando la libreria (library_service) esperar
                 xbmcgui.Window(xbmcgui.getCurrentWindowId()).setProperty("updatelibrary2", "disabled")
                 
-                Inicio = time.time() 
+                #Inicio = time.time() 
                 multihilo= (config.get_setting("multithread") !='false' ) #Por defecto esta activado
                 listahilos=[]
                 if multihilo:
@@ -85,19 +85,17 @@ def EjecutarFuncion(item):
                     listahilos.append(Trd)
                     Trd.start()
                 else:
-                    itemlist.append(ActualizarCanal(item.channel,config.get_localized_string(30064)))
-                    
+                    ActualizarCanal(item.channel,config.get_localized_string(30064))
                     xbmcgui.Dialog().notification('Actualizaciones automaticas', 'Buscado nuevos canales...', xbmcgui.NOTIFICATION_INFO ,1000)
                     updater.sincronizar_canales()
-                    
-                    itemlist.append(ActualizarServers())
+                    ActualizarServers()
                     
                 if multihilo:
                     #esperar a q todos los hilo acaben
                     for hilo in listahilos:
                         while hilo.isAlive():
                           time.sleep(0.5)
-                          
+                #print "########################## " + str(time.time()-Inicio) 
                 if xbmcgui.Window(xbmcgui.getCurrentWindowId()).getProperty("updatelibrary2") =="ready": #Si se han añadido nuevos capitulos (library_service) , y no se ha hecho aun actualizar
                     xbmc.executebuiltin('UpdateLibrary(video)')
                 xbmcgui.Window(xbmcgui.getCurrentWindowId()).setProperty("updatelibrary2", "enabled")
