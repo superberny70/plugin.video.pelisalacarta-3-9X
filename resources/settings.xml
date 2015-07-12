@@ -28,65 +28,25 @@
 	<setting id="hidepremium" type="bool" label="Ocultar servidores de pago sin cuenta" default="false"/>
 	
     <setting type="sep" />
-    <setting id="fileniumpremium" type="bool" label="Filenium" default="false"/>
-    <setting id="fileniumuser" type="text" label="30014" enable="eq(-1,true)" default=""/>
-    <setting id="fileniumpassword" type="text" label="30015" option="hidden" enable="!eq(-1,)+eq(-2,true)" default=""/>
-
-    <!--setting type="sep" />
-    <setting id="uploadedtopremium" type="bool" label="Uploaded.to premium" default="false"/>
-    <setting id="uploadedtouser" type="text" label="30014" enable="eq(-1,true)" default=""/>
-    <setting id="uploadedtopassword" type="text" label="30015" option="hidden" enable="!eq(-1,)+eq(-2,true)" default=""/-->
-
-    <setting type="sep" />
-    <setting id="realdebridpremium" type="bool" label="Real-Debrid" default="false"/>
-    <setting id="realdebriduser" type="text" label="30014"  enable="eq(-1,true)" default=""/>
-    <setting id="realdebridpassword" type="text" option="hidden" label="30015" enable="!eq(-1,)+eq(-2,true)" default=""/>
-
-    <setting type="sep" />
     <setting id="alldebridpremium" type="bool" label="Alldebrid" default="false"/>
     <setting id="alldebriduser" type="text" label="30014"  enable="eq(-1,true)" default=""/>
     <setting id="alldebridpassword" type="text" option="hidden" label="30015" enable="!eq(-1,)+eq(-2,true)" default=""/>
-
-    <setting type="sep" />
-    <setting id="uploadedtopremium" type="bool" label="Uploaded.to" default="false"/>
-    <setting id="uploadedtouser" type="text" label="30014"  enable="eq(-1,true)" default=""/>
-    <setting id="uploadedtopassword" type="text" option="hidden" label="30015" enable="!eq(-1,)+eq(-2,true)" default=""/>
-
-    <setting type="sep" />
-    <setting id="nowvideopremium" type="bool" label="Nowvideo" default="false"/>
-    <setting id="nowvideouser" type="text" label="30014"  enable="eq(-1,true)" default=""/>
-    <setting id="nowvideopassword" type="text" option="hidden" label="30015" enable="!eq(-1,)+eq(-2,true)" default=""/>
-
-    <setting type="sep" />
-    <setting id="mocosoftxaccount" type="bool" label="MocosoftX" default="false"/>
-    <setting id="mocosoftxuser" type="text" label="User"  enable="eq(-1,true)" default=""/>
-    <setting id="mocosoftxpassword" type="text" option="hidden" label="Password" enable="!eq(-1,)+eq(-2,true)" default=""/>
-	<!--
-    <setting type="sep" />
-    <setting id="serieslyaccount" type="bool" label="Series.ly" default="false"/>
-    <setting id="serieslyuser" type="text" label="User"  enable="eq(-1,true)" default=""/>
-    <setting id="serieslypassword" type="text" option="hidden" label="Password" enable="!eq(-1,)+eq(-2,true)" default=""/>
-	-->
-	<setting type="sep" />
-    <setting id="seriesmuaccount" type="bool" label="SeriesMu" default="false"/>
-    <setting id="seriesmuuser" type="text" label="User"  enable="eq(-1,true)" default=""/>
-    <setting id="seriesmupassword" type="text" option="hidden" label="Password" enable="!eq(-1,)+eq(-2,true)" default=""/>
-    
-	<setting type="sep" />
-    <setting id="stormtvaccount" type="bool" label="stormtv" default="false"/>
-    <setting id="stormtvuser" type="text" label="User"  enable="eq(-1,true)" default=""/>
-    <setting id="stormtvpassword" type="text" option="hidden" label="Password" enable="!eq(-1,)+eq(-2,true)" default=""/>
-
-	<setting type="sep" />
-    <setting id="newpct1account" type="bool" label="Newpct1" default="false"/>
-    <setting id="newpct1user" type="text" label="User"  enable="eq(-1,true)" default=""/>
-    <setting id="newpct1password" type="text" option="hidden" label="Password" enable="!eq(-1,)+eq(-2,true)" default=""/>
 	
+	<setting type="sep" />
+    <setting id="fileniumpremium" type="bool" label="Filenium" default="false"/>
+    <setting id="fileniumuser" type="text" label="30014" enable="eq(-1,true)" default=""/>
+    <setting id="fileniumpassword" type="text" label="30015" option="hidden" enable="!eq(-1,)+eq(-2,true)" default=""/>
+    
+    <setting type="sep" />
+    <setting id="hdfullaccount" type="bool" label="HDfull" default="false"/>
+    <setting id="hdfulluser" type="text" label="User"  enable="eq(-1,true)" default=""/>
+    <setting id="hdfullpassword" type="text" option="hidden" label="Password" enable="!eq(-1,)+eq(-2,true)" default=""/>
+		
     <setting type="sep" />
     <setting id="megaspainaccount" type="bool" label="megaspain" default="false"/>
     <setting id="megaspainuser" type="text" label="User"  enable="eq(-1,true)" default=""/>
     <setting id="megaspainpassword" type="text" option="hidden" label="Password" enable="!eq(-1,)+eq(-2,true)" default=""/>
-
+	
     <setting type="sep" />
     <setting id="megahdaccount" type="bool" label="megaHD" default="false"/>
     <setting id="megahduser" type="text" label="User"  enable="eq(-1,true)" default=""/>
@@ -96,6 +56,26 @@
     <setting id="megaforoaccount" type="bool" label="megaforo" default="false"/>
     <setting id="megaforouser" type="text" label="User"  enable="eq(-1,true)" default=""/>
     <setting id="megaforopassword" type="text" option="hidden" label="Password" enable="!eq(-1,)+eq(-2,true)" default=""/>
+
+	<setting type="sep" />
+    <setting id="mocosoftxaccount" type="bool" label="MocosoftX" default="false"/>
+    <setting id="mocosoftxuser" type="text" label="User"  enable="eq(-1,true)" default=""/>
+    <setting id="mocosoftxpassword" type="text" option="hidden" label="Password" enable="!eq(-1,)+eq(-2,true)" default=""/>
+	
+	<setting type="sep" />
+    <setting id="newpct1account" type="bool" label="Newpct1" default="false"/>
+    <setting id="newpct1user" type="text" label="User"  enable="eq(-1,true)" default=""/>
+    <setting id="newpct1password" type="text" option="hidden" label="Password" enable="!eq(-1,)+eq(-2,true)" default=""/>
+	
+	<setting type="sep" />
+    <setting id="nowvideopremium" type="bool" label="Nowvideo" default="false"/>
+    <setting id="nowvideouser" type="text" label="30014"  enable="eq(-1,true)" default=""/>
+    <setting id="nowvideopassword" type="text" option="hidden" label="30015" enable="!eq(-1,)+eq(-2,true)" default=""/>
+
+	<setting type="sep" />
+    <setting id="playmaxaccount" type="bool" label="playmax" default="false"/>
+    <setting id="playmaxuser" type="text" label="User"  enable="eq(-1,true)" default=""/>
+    <setting id="playmaxpassword" type="text" option="hidden" label="Password" enable="!eq(-1,)+eq(-2,true)" default=""/>
 
     <setting type="sep" />
     <setting id="pordedeaccount" type="bool" label="pordede" default="false"/>
@@ -110,15 +90,30 @@
     <setting id="quebajamosuser" type="text" label="User"  enable="eq(-1,true)" default=""/>
     <setting id="quebajamospassword" type="text" option="hidden" label="Password" enable="!eq(-1,)+eq(-2,true)" default=""/>
 
+	<setting type="sep" />
+    <setting id="realdebridpremium" type="bool" label="Real-Debrid" default="false"/>
+    <setting id="realdebriduser" type="text" label="30014"  enable="eq(-1,true)" default=""/>
+    <setting id="realdebridpassword" type="text" option="hidden" label="30015" enable="!eq(-1,)+eq(-2,true)" default=""/>
+
+	<setting type="sep" />
+    <setting id="seriesmuaccount" type="bool" label="SeriesMu" default="false"/>
+    <setting id="seriesmuuser" type="text" label="User"  enable="eq(-1,true)" default=""/>
+    <setting id="seriesmupassword" type="text" option="hidden" label="Password" enable="!eq(-1,)+eq(-2,true)" default=""/>
+    
+	<setting type="sep" />
+    <setting id="stormtvaccount" type="bool" label="stormtv" default="false"/>
+    <setting id="stormtvuser" type="text" label="User"  enable="eq(-1,true)" default=""/>
+    <setting id="stormtvpassword" type="text" option="hidden" label="Password" enable="!eq(-1,)+eq(-2,true)" default=""/>
+
+	<setting type="sep" />
+    <setting id="uploadedtopremium" type="bool" label="Uploaded.to" default="false"/>
+    <setting id="uploadedtouser" type="text" label="30014"  enable="eq(-1,true)" default=""/>
+    <setting id="uploadedtopassword" type="text" option="hidden" label="30015" enable="!eq(-1,)+eq(-2,true)" default=""/>
+
     <setting type="sep" />
     <setting id="zampaseriesaccount" type="bool" label="zampaseries" default="false"/>
     <setting id="zampaseriesuser" type="text" label="User"  enable="eq(-1,true)" default=""/>
     <setting id="zampaseriespassword" type="text" option="hidden" label="Password" enable="!eq(-1,)+eq(-2,true)" default=""/>
-
-    <setting type="sep" />
-    <setting id="playmaxaccount" type="bool" label="playmax" default="false"/>
-    <setting id="playmaxuser" type="text" label="User"  enable="eq(-1,true)" default=""/>
-    <setting id="playmaxpassword" type="text" option="hidden" label="Password" enable="!eq(-1,)+eq(-2,true)" default=""/>
 
     <setting type="sep" />
     <setting id="jdownloader_enabled" type="bool" label="JDownloader" default="false"/>
