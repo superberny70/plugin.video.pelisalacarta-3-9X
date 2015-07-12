@@ -558,6 +558,15 @@ def play_video(channel="",server="",url="",category="",title="", thumbnail="",pl
 
         elif config.get_setting("player_mode")=="0" or (config.get_setting("player_mode")=="3" and mediaurl.startswith("rtmp")):
             logger.info("b8")
+            
+            ## play_torrent - pelisalacarta-MCT
+            if mediaurl.endswith( "MCT" ):
+                import re
+                mediaurl = re.sub( r'MCT$', '', mediaurl )
+                import mct
+                mct.play( mediaurl )
+                return
+            
             # Añadimos el listitem a una lista de reproducción (playlist)
             playlist = xbmc.PlayList( xbmc.PLAYLIST_VIDEO )
             playlist.clear()

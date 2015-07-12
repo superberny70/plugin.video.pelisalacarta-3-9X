@@ -24,6 +24,7 @@ def get_video_url( page_url , premium = False , user="" , password="" , video_pa
     media_url_pulsar = "plugin://plugin.video.pulsar/play?uri=%s" % urllib.quote_plus(link)
 
     video_urls = [
+         [ "[MCT] %s" % (name),page_url+"MCT", 0 ],
          [ "[KMediaTorrent] %s" % (name), media_url_kmediatorrent ],
          [ "[xbmctorrent] %s" % (name), media_url_xbmctorrent ],
          [ "[pulsar] %s" % (name), media_url_pulsar ]
