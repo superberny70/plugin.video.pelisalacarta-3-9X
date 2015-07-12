@@ -5,6 +5,7 @@
 # http://blog.tvalacarta.info/plugin-xbmc/pelisalacarta/
 #------------------------------------------------------------
 import urlparse,urllib2,urllib,re
+import os
 
 from core import logger
 from core import config
@@ -12,14 +13,15 @@ from core import scrapertools
 from core.item import Item
 from servers import servertools
 
+if config.get_platform().startswith( "xbmc" ) or config.get_platform().startswith( "boxee" ):
+    import xbmc, xbmcgui
+
 PLUGIN_NAME = "pelisalacarta"
 
 __channel__ = "seriesdanko"
-__adult__ = "false"
 __category__ = "S"
 __type__ = "generic"
-__title__ = "SeriesDanko"
-__thumbnail__ = ""
+__title__ = "Seriesdanko"
 __language__ = "ES"
 
 DEBUG = config.get_setting("debug")
@@ -66,7 +68,7 @@ def novedades(item):
     </div>
     <div class='post-header'>
     <br /><a href="serie.php?serie=553" title='TODO-TITLE'><img class='ict' style='display: block; border: 3px solid #616161; opacity: 1; margin: 0px auto 10px; text-align: center; cursor: pointer; width: 400px; height: 500px; 'src='http://1.bp.blogspot.com/-YJMaorkbMtU/UGmpQZqIhiI/AAAAAAAAWPA/IXywwgXawFY/s400/the-good-wife-julianna-margulies-4.jpg' alt='TODO-alt' title='TODO-title' /></a><div face='trebuchet ms' style='text-align: center;'><a href='serie.php?serie=553'>
-    <span style='font-weight: bold;'> </span> 
+    <span style='font-weight: bold;'> </span>
     <span style='font-weight: bold;'>Ya Disponible en V.O.S.E para ver online y descargar,aqui en SeriesDanko.com</span></a>
     <span style='font-weight: bold;'></span></div><div class='post-header-line-1'></div>
     </div>
@@ -90,7 +92,7 @@ def novedades(item):
             scrapedtitle = "sin titulo"
         scrapedplot = ""
         itemlist.append( Item(channel=__channel__, action="episodios", title=scrapedtitle , url=scrapedurl , thumbnail=scrapedthumbnail , plot=scrapedplot , extra = extra , folder=True , totalItems = totalItems ) )
-    
+   
     return itemlist
 
 def allserieslist(item):
@@ -126,7 +128,7 @@ def allserieslist(item):
 
         if (DEBUG): logger.info("title=["+scrapedtitle+"], url=["+scrapedurl+"], thumbnail=["+scrapedthumbnail+"]")
         if title in Basechars or title == "0-9":
-            
+           
             scrapedurl = BaseUrl % title
         else:
             action = "episodios"
@@ -165,7 +167,7 @@ def detalle_programa(item):
 def series(item,data=""):
     logger.info("pelisalacarta.channels.seriesdanko series")
     itemlist = []
-    
+   
     # Descarga la página
     if data=="":
         data = scrapertools.cache_page(item.url)
@@ -182,7 +184,7 @@ def series(item,data=""):
     #<div style='float:left;width: 33%;text-align:center;'><a href='serie.php?serie=748' title='Capitulos de: Aaron Stone'><img class='ict' src='http://3.bp.blogspot.com/-0m9BHsd1Etc/To2PMvCRNeI/AAAAAAAAD1Y/ax3KPRNnJjY/s400/aaron-stone.jpg' alt='Capitulos de: Aaron Stone' height='184' width='120'></a><br><div style='text-align:center;line-height:20px;height:20px;'><a href='serie.php?serie=748' style='font-size: 11px;'>Capitulos de: Aaron Stone</a></div><br><br></div><div style='float:left;widt
     patronvideos = "<div[^<]+<a href='(serie.php[^']+)' title='Capitulos de\: ([^']+)'><img class='ict' src='([^']+)'"
     matches = re.compile(patronvideos,re.DOTALL).findall(data)
-        
+       
     if len(matches)==0:
         #<div style='float:left;width: 33%;text-align:center;'><a href='../serie.php?serie=938' title='Capitulos de: Tron: Uprising'><img class='ict' src='http://2.bp.blogspot.com/-N1ffDX9Cf_s/T7qPkVEoFgI/AAAAAAAALmM/EN_vA-UCJJY/s1600/tron--uprising.jpg' alt='Capitulos de: Tron: Uprising' height='184' width='120'></a><br><div style='text-align:center;line-height:20px;height:20px;'><a href='../serie.php?serie=938' style='font-size: 11px;'>Capitulos de: Tron: Uprising'</a></div><br><br></div><div style='float:left;width: 33%;text-align:center;'><a href='../serie.php?serie=966' title='Capitulos de: Pablo Escobar El Patron del Mal '><img class='ict' src='http://2.bp.blogspot.com/-5Ten6N_ytgU/T-7569pKe5I/AAAAAAAAMnY/nfVNFd9W5Oo/s1600/Escobar-el-patron-del-mal.jpg' alt='Capitulos de: Pablo Escobar El Patron del Mal ' height='184' width='120'></a><br><div style='text-align:center;line-height:20px;height:20px;'><a href='../serie.php?serie=966' style='font-size: 11px;'>Capitulos de: Pablo Escobar El Patron del Mal '</a></div><br><br></div></div></td></tr></tbody></table><div style='clear: both;'></div>
         patronvideos = "<div[^<]+<a href='(../serie.php[^']+)' title='Capitulos de\: ([^']+)'><img class='ict' src='([^']+)'"
@@ -203,13 +205,14 @@ def series(item,data=""):
 
 def episodios(item):
     logger.info("pelisalacarta.channels.seriesdanko episodios")
-    
+   
     if config.get_platform()=="xbmc" or config.get_platform()=="xbmcdharma":
         import xbmc
         if config.get_setting("forceview")=="true":
             xbmc.executebuiltin("Container.SetViewMode(53)")  #53=icons
             #xbmc.executebuiltin("Container.Content(Movies)")
-        
+
+    item.url = item.url.replace("../","") ## Corrige los enlaces que vienen de search
     if "|" in item.url:
         url = item.url.split("|")[0]
         sw = True
@@ -218,7 +221,7 @@ def episodios(item):
         sw = False
     # Descarga la página
     if item.extra:
-        
+       
         contenidos = item.extra
         #print contenidos
     else:
@@ -236,7 +239,7 @@ def episodios(item):
         else:
             patronvideos = "entry-content(.*?)<div class='blog-pager' id='blog-pager'>"
             matches = re.compile(patronvideos,re.DOTALL).findall(data)
-            
+           
         if len(matches)>0:
             contenidos = matches[0].replace('"',"'").replace("\n","")
         else:
@@ -251,7 +254,7 @@ def episodios(item):
                 matches = re.compile(patronvideos,re.DOTALL).findall(data)
                 if len(matches)>0:
                     contenidos = matches[0]
-                
+               
     patronvideos  = "<a href='([^']+)'>([^<]+)</a> <img(.+?)/>"
     matches = re.compile(patronvideos,re.DOTALL).findall(contenidos.replace('"',"'"))
     #print contenidos        
@@ -269,7 +272,7 @@ def episodios(item):
         logger.info("scrapedtitle="+scrapedtitle)
         ## Eliminado para la opción "Añadir esta serie a la biblioteca de XBMC" (15-12-2014)
         #scrapedtitle = scrapertools.remove_show_from_title(scrapedtitle,item.show)
-        
+       
         episode_code = scrapertools.find_single_match(scrapedtitle,"(\d+X\d+)")
         logger.info("episode_code="+episode_code)
         if episode_code!="":
@@ -318,7 +321,7 @@ def episodios(item):
             scrapedthumbnail = item.thumbnail
         scrapedthumbnail = scrapedthumbnail.replace("\n","").replace("\r","")
         if item.fulltitle == '':
-            item.fulltitle = scrapedtitle + subtitle 
+            item.fulltitle = scrapedtitle + subtitle
         if (DEBUG): logger.info("title=["+scrapedtitle+"], url=["+scrapedurl+"], thumbnail=["+scrapedthumbnail+"]")
 
         ## Añadido show para la opción "Añadir esta serie a la biblioteca de XBMC" (15-12-2014)
@@ -330,12 +333,12 @@ def episodios(item):
         itemlist.append( Item(channel=item.channel, title="Descargar todos los episodios de la serie", url=item.url, action="download_all_episodes", extra="episodios###", show=item.show))
 
     #xbmc.executebuiltin("Container.Content(Movies)")
-    
+   
     if len(itemlist)==0:
         listvideos = servertools.findvideos(contenidos)
-        
+       
         for title,url,server in listvideos:
-            
+           
             if server == "youtube":
                 scrapedthumbnail = "http://i.ytimg.com/vi/" + url + "/0.jpg"
             else:
@@ -343,7 +346,7 @@ def episodios(item):
             scrapedtitle = title
             scrapedplot = ""
             scrapedurl = url
-            
+           
             if (DEBUG): logger.info("title=["+scrapedtitle+"], url=["+scrapedurl+"], thumbnail=["+scrapedthumbnail+"]")
 
             # Añade al listado de XBMC
@@ -353,12 +356,12 @@ def episodios(item):
 
 def findvideos(item):
     logger.info("pelisalacarta.channels.seriesdanko findvideos")
-    
+   
     # Descarga la página
     if config.get_platform()=="xbmceden":
         from core.subtitletools import saveSubtitleName
         saveSubtitleName(item)
-    
+   
     if "seriesdanko.com" in item.url:
         data = scrapertools.downloadpageGzip(item.url).replace("\n","")
         patronvideos = "<tr><td class=('tam12'>.*?)</td></tr>"
@@ -406,12 +409,12 @@ def findvideos(item):
                     subtitle = " (Bable)"
                 else:
                     subtitle = "(desconocido)"
-                
+               
                 try:
                     opcion = re.compile(r"(Ver|Descargar)").findall(match)[0]
                 except:
                     opcion = "Ver"
-                
+               
                 ## Modificado para que se vea el servidor en el título (15-12-2014)
                 #scrapedtitle = opcion + " video " + subtitle + mega
                 scrapedtitle = opcion + " video " + subtitle + servidor
@@ -420,25 +423,79 @@ def findvideos(item):
             scrapedplot = ""
             #scrapedthumbnail = item.thumbnail
             #if (DEBUG): logger.info("title=["+scrapedtitle+"], url=["+scrapedurl+"], thumbnail=["+scrapedthumbnail+"]")
-    
+   
             # Añade al listado de XBMC
             itemlist.append( Item(channel=__channel__, action="play", title=scrapedtitle , url=scrapedurl , thumbnail=scrapedthumbnail , plot=scrapedplot, fulltitle = item.fulltitle, extra = item.thumbnail , fanart=item.thumbnail , folder=False) )    
-    
+   
     else:
         from core import servertools
         itemlist = servertools.find_video_items( item )
-    
+   
     return itemlist
 
 def play(item):
     logger.info("pelisalacarta.channels.seriesdanko play (url="+item.url+", server="+item.server+")" )
 
-    # Descarga la página
-    if "seriesdanko" in item.url:
-        data = scrapertools.downloadpageGzip(item.url)
-    else:
-        data = item.url
+    data = scrapertools.cache_page(item.url)
+
+    patron = '<input type="hidden" name="id" value="([^"]+)" />.*?'
+    patron+= '<img src="([^"]+)"'
+
+    matches = re.compile(patron,re.DOTALL).findall(data)
+
+    id = matches[0][0]
+    captcha = matches[0][1]
+
+    image = os.path.join( config.get_data_path(), 'captcha.png')
+
+    imgurl = "http://seriesdanko.com/" + captcha
+    req = urllib2.Request(imgurl)
+    req.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:35.0) Gecko/20100101 Firefox/35.0')
+    req.add_header('Accept-Encoding','gzip, deflate')
+    f = urllib2.urlopen(req)
+    img = open(image, 'wb')
+    img.write(f.read())
+    img.close()
+
+    spc = get_captcha(image)
+    post = "id=%s&spc=%s" % (id,spc)
+
+    data = scrapertools.cache_page( "http://seriesdanko.com/anonim.php", post=post )
+
     return servertools.find_video_items(data=data)
+
+def get_captcha(image):
+
+    res = 1080
+    #inputCaptcha = InputWindow(x=330, y=30, ancho=300, alto=57, escalar=200, captcha = image)
+    inputCaptcha = InputWindow(x=(res/2), y=40, ancho=160, alto=75, escalar=100, captcha = image)
+    outputCaptcha = inputCaptcha.get()
+    if not outputCaptcha: return 1
+
+    return outputCaptcha
+
+## Clase para captcha
+class InputWindow(xbmcgui.WindowDialog):
+    def __init__(self, *args, **kwargs):
+        self.x = kwargs.get('x')
+        self.y = kwargs.get('y')
+        self.escalar = kwargs.get('escalar')/100
+        self.ancho = kwargs.get('ancho')*self.escalar
+        self.alto = kwargs.get('alto')*self.escalar
+        self.captcha = kwargs.get('captcha')
+        self.img = xbmcgui.ControlImage( self.x, self.y, self.ancho, self.alto, self.captcha )
+        self.addControl(self.img)
+        self.kbd = xbmc.Keyboard()
+
+    def get(self):
+        self.show()
+        self.kbd.doModal()
+        if (self.kbd.isConfirmed()):
+            text = self.kbd.getText()
+            self.close()
+            return text
+        self.close()
+        return False
 
 def decodeHtmlentities(string):
     string = entitiesfix(string)
@@ -457,9 +514,9 @@ def decodeHtmlentities(string):
                 return unichr(cp).encode('utf-8')
             else:
                 return match.group()
-                
+               
     return entity_re.subn(substitute_entity, string)[0]
-    
+   
 def entitiesfix(string):
     # Las entidades comienzan siempre con el símbolo & , y terminan con un punto y coma ( ; ).
     string = string.replace("&aacute","&aacute;")
@@ -490,11 +547,11 @@ def test():
     bien = False
     for novedades_item in novedades_items:
         episodios_items = episodios(novedades_item)
-        
+       
         for episodio_item in episodios_items:
-            
+           
             mirrors_items = findvideos(episodio_item)
-            
+           
             for mirror_item in mirrors_items:
                 videoitems = play(mirror_item)
                 if len(videoitems)>0:
