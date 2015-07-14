@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <version>
 	<name>newpct1</name>
-	<tag>8</tag>
-	<date>19/04/15</date>
-	<changes>Añadido login by robalo</changes>
+	<tag>9</tag>
+	<date>14/07/15</date>
+	<changes>Corregido patron en get_episodios</changes>
 </version>
