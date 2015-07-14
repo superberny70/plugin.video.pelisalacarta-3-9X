@@ -19,6 +19,7 @@ if config.get_platform().startswith( "xbmc" ) or config.get_platform().startswit
 PLUGIN_NAME = "pelisalacarta"
 
 __channel__ = "seriesdanko"
+__adult__ = "false"
 __category__ = "S"
 __type__ = "generic"
 __title__ = "Seriesdanko"
