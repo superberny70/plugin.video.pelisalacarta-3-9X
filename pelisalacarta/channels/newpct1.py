@@ -132,6 +132,11 @@ def listado(item):
                 url = 'http://www.newpct1.com/index.php?page=buscar&url=&letter=&q=%22' + title.replace(" ","%20")
                 url += '%22&categoryID=&categoryIDR=775&calidad=' + calidad.replace(" ","+") #HDTV+720p+AC3+5.1
                 url += '&idioma=&ordenar=Nombre&inon=Descendente'         
+            elif "1.com/series/" in url: 
+                extra="serie-tv"
+                url = 'http://www.newpct1.com/index.php?page=buscar&url=&letter=&q=%22' + title.replace(" ","%20")
+                url += '%22&categoryID=&categoryIDR=767&calidad=' + calidad.replace(" ","+") 
+                url += '&idioma=&ordenar=Nombre&inon=Descendente'  
             
         else:    
             title= title.replace("Descargar","",1).strip()
@@ -173,7 +178,8 @@ def completo(item):
                 categoryID=buscar_en_subcategoria(item.show,'1469')
             elif item_extra=="serie-vo":
                 categoryID=buscar_en_subcategoria(item.show,'775')
-                
+            elif item_extra=="serie-tv":
+                categoryID=buscar_en_subcategoria(item.show,'767')
             if categoryID !="":
                 item.url=item.url.replace("categoryID=","categoryID="+categoryID)
                 
@@ -317,9 +323,9 @@ def get_episodios(item):
 def buscar_en_subcategoria(titulo, categoria):
     data= scrapertools.cache_page("http://www.newpct1.com/pct1/library/include/ajax/get_subcategory.php", post="categoryIDR=" + categoria)
     data=data.replace("</option>"," </option>")
-    patron = '<option value="(\d+)">(' + titulo.replace(" ","\s") + '\s[^<]*)</option>'
-    #logger.info("[newpct1.py] buscar_en_subcategoria: data=" + data)
-    #logger.info("[newpct1.py] buscar_en_subcategoria: patron=" + patron)
+    patron = '<option value="(\d+)">(' + titulo.replace(" ","\s").replace("(","/(").replace(")","/)") + '\s[^<]*)</option>'
+    logger.info("[newpct1.py] buscar_en_subcategoria: data=" + data)
+    logger.info("[newpct1.py] buscar_en_subcategoria: patron=" + patron)
     matches = re.compile(patron,re.DOTALL | re.IGNORECASE).findall(data)
     
     if len(matches)==0: matches=[('','')]
