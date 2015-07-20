@@ -115,13 +115,13 @@ def listado(item):
     itemlist = []
     
     data = re.sub(r"\n|\r|\t|\s{2}|(<!--.*?-->)","",scrapertools.cache_page(item.url))
-    patron = '<div class="grid-list(.*?)<div class="footer">'
+    #patron = '<div class="grid-list(.*?)<div class="footer">'
+    patron = '<div class="grid-list(.*?)</a></div></div></div>'
             
     try:
-        fichas = scrapertools.get_match(data,patron)
+        fichas = scrapertools.get_match(data,patron) + '</a>'
     except:
         return itemlist # Devolvemos lista vacia
-    
     
     '''<a href="/movie/6916/Big-Eyes-2014-online" 
     title="Big Eyes" data-ajax="true" data-label="Big Eyes - 2014" data-page="movies">
@@ -139,7 +139,7 @@ def listado(item):
     patron += 'data-label=".*?(\d{4})".*?' #año
     patron += '<div class="poster">(.*?)</a>' #info
     matches = re.compile(patron,re.DOTALL).findall(fichas)
-    #logger.info("[peliserie.py] listado: matches " + str(len(matches)))
+    logger.info("[peliserie.py] listado: matches " + str(len(matches)))
     
     pag_actual= 1
     i=0
