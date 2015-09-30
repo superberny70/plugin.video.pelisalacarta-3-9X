@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.pelisalacarta"
-    name="pelisalacarta"
-    version="3.91.99 Solo para desarrollo"
+<addon id="plugin.video.pelisalacarta-3-9X"
+    name="pelisalacarta 3.9X"
+    version="3.92.01 Solo para desarrollo"
     provider-name="tvalacarta">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>

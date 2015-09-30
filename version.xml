@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <version>
-	<name>pelisalacarta</name>
-	<tag>3.91.99</tag>
-	<date>27/03/2015</date>
-	<changes>New release</changes>
+	<name>pelisalacarta 3.9X</name>
+	<tag>3.92.01</tag>
+	<date>30/09/2015</date>
+	<changes>Cambio de nombre para poder mantener esta version no oficial</changes>
 </version>
