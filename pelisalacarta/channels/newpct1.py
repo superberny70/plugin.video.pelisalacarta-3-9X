@@ -90,6 +90,7 @@ def alfabeto(item):
 
 def listado(item):
     logger.info("[newpct1.py] listado")
+    #logger.info("[newpct1.py] listado url=" + item.url)
     itemlist = []
     
     data = re.sub(r"\n|\r|\t|\s{2}|(<!--.*?-->)","",scrapertools.cache_page(item.url))
@@ -122,21 +123,22 @@ def listado(item):
             title= title.replace("Ver online","",1).replace("Descarga Serie HD","",1).replace("Ver en linea","",1).strip() 
             #logger.info("[newpct1.py] titulo="+title)
             
+            if len(title)>3:    
+                url_i = 'http://www.newpct1.com/index.php?page=buscar&url=&letter=&q=%22' + title.replace(" ","%20") + '%22'     
+            else:
+                url_i = 'http://www.newpct1.com/index.php?page=buscar&url=&letter=&q=' + title 
+            
             if "1.com/series-hd" in url:
                 extra="serie-hd"
-                url = 'http://www.newpct1.com/index.php?page=buscar&url=&letter=&q=%22' + title.replace(" ","%20")
-                url += '%22&categoryID=&categoryIDR=1469&calidad=' + calidad.replace(" ","+") #DTV+720p+AC3+5.1
-                url += '&idioma=&ordenar=Nombre&inon=Descendente'
+                url = url_i + '&categoryID=&categoryIDR=1469&calidad=' + calidad.replace(" ","+") #DTV+720p+AC3+5.1
             elif "1.com/series-vo" in url: 
                 extra="serie-vo"
-                url = 'http://www.newpct1.com/index.php?page=buscar&url=&letter=&q=%22' + title.replace(" ","%20")
-                url += '%22&categoryID=&categoryIDR=775&calidad=' + calidad.replace(" ","+") #HDTV+720p+AC3+5.1
-                url += '&idioma=&ordenar=Nombre&inon=Descendente'         
+                url = url_i + '&categoryID=&categoryIDR=775&calidad=' + calidad.replace(" ","+") #HDTV+720p+AC3+5.1       
             elif "1.com/series/" in url: 
                 extra="serie-tv"
-                url = 'http://www.newpct1.com/index.php?page=buscar&url=&letter=&q=%22' + title.replace(" ","%20")
-                url += '%22&categoryID=&categoryIDR=767&calidad=' + calidad.replace(" ","+") 
-                url += '&idioma=&ordenar=Nombre&inon=Descendente'  
+                url = url_i + '&categoryID=&categoryIDR=767&calidad=' + calidad.replace(" ","+") 
+                
+            url += '&idioma=&ordenar=Nombre&inon=Descendente'  
             
         else:    
             title= title.replace("Descargar","",1).strip()
@@ -230,9 +232,9 @@ def completo(item):
             # Añade a la lista completa y sale
             itemlist.extend( items_programas )
             salir = True          
-            
-    if (config.get_platform().startswith("xbmc") or config.get_platform().startswith("boxee")) and len(itemlist)>0 and (item.extra.startswith("serie") ):
-        itemlist.append( Item(channel=item.channel, title="Añadir esta serie a la biblioteca de XBMC", url=item.url, action="add_serie_to_library", extra="completo###serie_add" , show= item.show))
+      
+    if (config.get_library_support() and len(itemlist)>0 and item.extra.startswith("serie")) :
+        itemlist.append( Item(channel=item.channel, title="Añadir esta serie a la biblioteca", url=item.url, action="add_serie_to_library", extra="completo###serie_add" , show= item.show))
     logger.info("[newpct1.py] completo items="+ str(len(itemlist)))
     return itemlist
    
@@ -243,7 +245,7 @@ def get_episodios(item):
     data = re.sub(r'\n|\r|\t|\s{2}|<!--.*?-->|<i class="icon[^>]+"></i>',"",scrapertools.cache_page(item.url))
     data = unicode( data, "iso-8859-1" , errors="replace" ).encode("utf-8")
     
-    #logger.info("[newpct1.py] data=" +data)
+    logger.info("[newpct1.py] data=" +data)
       
     patron = '<ul class="buscar-list">(.*?)</ul>'
     #logger.info("[newpct1.py] patron=" + patron)
@@ -329,7 +331,7 @@ def buscar_en_subcategoria(titulo, categoria):
     matches = re.compile(patron,re.DOTALL | re.IGNORECASE).findall(data)
     
     if len(matches)==0: matches=[('','')]
-    
+    logger.info("[newpct1.py] buscar_en_subcategoria: resultado=" + matches [0][0])
     return matches [0][0]
     
 def findvideos(item):

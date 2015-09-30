@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <version>
 	<name>newpct1</name>
-	<tag>10</tag>
-	<date>17/07/15</date>
-	<changes>Afinar busqueda en Series TV</changes>
+	<tag>11</tag>
+	<date>30/09/15</date>
+	<changes>Corregir bug en Series</changes>
 </version>
