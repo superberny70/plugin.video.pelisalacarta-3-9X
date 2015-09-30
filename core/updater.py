@@ -13,7 +13,7 @@ from core.item import Item
 from distutils.version import StrictVersion
  
 
-PLUGIN_NAME = "pelisalacarta"
+PLUGIN_NAME = "pelisalacarta-3-9X"
 ROOT_DIR = config.get_runtime_path()
 REMOTE_VERSION_FILE = "http://blog.tvalacarta.info/descargas/"+PLUGIN_NAME+"-version.xml"
 LOCAL_VERSION_FILE = os.path.join( ROOT_DIR , "version.xml" )

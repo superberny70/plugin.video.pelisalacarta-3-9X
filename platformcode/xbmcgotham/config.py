@@ -21,8 +21,10 @@ import os
 import xbmcaddon
 import xbmc
 
-PLUGIN_NAME = "pelisalacarta"
-__settings__ = xbmcaddon.Addon(id="plugin.video."+PLUGIN_NAME)
+
+
+__settings__ = xbmcaddon.Addon()
+PLUGIN_ID = __settings__.getAddonInfo("id")
 __language__ = __settings__.getLocalizedString
 
 def get_system_platform():
@@ -73,7 +75,7 @@ def get_library_path():
     if get_system_platform() == "xbox":
         default = xbmc.translatePath(os.path.join(get_runtime_path(),"library"))
     else:
-        default = xbmc.translatePath("special://profile/addon_data/plugin.video."+PLUGIN_NAME+"/library")
+        default = xbmc.translatePath("special://profile/addon_data/"+PLUGIN_ID+"/library")
 
     value = get_setting("librarypath")
     if value=="":

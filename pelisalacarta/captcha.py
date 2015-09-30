@@ -12,7 +12,7 @@ from core import scrapertools
 
 import urllib2, urllib, httplib, time
 
-__settings__ = Addon( "plugin.video.pelisalacarta" )
+__settings__ = Addon()
 __addonDir__ = __settings__.getAddonInfo( "path" )
 
 DEFAULT_CAPTCHA = os.path.join( __addonDir__, "resources","images","noimage.gif")

@@ -119,6 +119,6 @@ class Item(object):
           decoded = base64.b64decode(encoded)
           if len(decoded.split("=")) > 1:
             property = decoded.split("=")[0]
-            value = decoded.replace(property+"=","")
+            value = decoded.replace(property+"=","",1)
             exec "self."+property+" = type(self."+property+")(value)"
           

@@ -17,8 +17,11 @@ from core import updater
 import xbmcgui
 import xbmcplugin
 import xbmc
+import xbmcaddon
 import channelselector as channelselector
 from platformcode.xbmc import library
+
+PLUGIN_ID = xbmcaddon.Addon().getAddonInfo("id")
 
 xbmcgui.Window(xbmcgui.getCurrentWindowId()).setProperty("updatelibrary2", "enabled")
 
@@ -57,7 +60,7 @@ def EjecutarFuncion(item):
                 u'Puede descargar la versión oficial en http://blog.tvalacarta.info/plugin-xbmc/pelisalacarta/')
             
             config.set_setting('enableadultmode','false')
-               
+            ''' Desactivar actualizaciones
             if config.get_setting("updatecheck2")=="true": 
                 #xbmcgui.Dialog().notification('Actualizaciones automaticas', 'Buscado nueva versión...', xbmcgui.NOTIFICATION_INFO ,1000)
                 itemlist.extend(ActualizarPlugin())
@@ -102,7 +105,7 @@ def EjecutarFuncion(item):
              
         elif config.get_setting("updatechannels")=="true": 
             itemlist.append(ActualizarCanal(item.channel,"¡Canal descargado y actualizado!"))
-        
+        '''
 
     # Importa el canal
     if item.channel: channelmodule = ImportarCanal(item.channel)
@@ -347,7 +350,7 @@ def AddItem(item, totalitems):
 # Crea le url con el item serializado:----------->OK
 def ConstruirURL(item):
   #itemurl = sys.argv[ 0 ] + "?" + item.serialize()
-  itemurl = "plugin://plugin.video.pelisalacarta/?" + item.serialize()
+  itemurl = "plugin://"+ PLUGIN_ID + "/?" + item.serialize()
   return itemurl
 
 
@@ -358,6 +361,7 @@ def ExtraerItem():
     itemserializado = sys.argv[2].replace("?","")
     if itemserializado:
       item.deserialize(itemserializado)
+      #logger.info("[launcher.py] - ExtraerItem: " + item.tostring() )
     else:
       item = Item(channel="channelselector", action="mainlist")
     return item

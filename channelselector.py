@@ -91,7 +91,7 @@ def channels_list(category='*'):
     if os.path.exists(PATH_LIST_CHANNELS_JSON): # Si existe list_channels.json lo abrimos...
         indice_canales= json.load(open(PATH_LIST_CHANNELS_JSON))
     else: # Si no existe list_channels.json lo creamos
-        indice_canales= updater.comparar_canales()
+        indice_canales= updater.sincronizar_canales()
         
     for channel in sorted(indice_canales):
         
