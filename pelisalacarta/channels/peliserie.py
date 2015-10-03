@@ -153,7 +153,7 @@ def listado(item):
             pag_actual= float(scrapertools.get_match(item.url,'page=(\d+)'))
             
     if item.extra=='series':
-        action = 'getTemporadas'
+        action = 'getEpisodios'
     else:
         action = "findvideos"
                         
@@ -198,75 +198,28 @@ def listado(item):
         itemlist.append( Item(channel=__channel__, action="listado" , title=">> Página siguiente" , url=url_next_page, extra=item.extra))            
     logger.info("[peliserie.py] listado: itemlist " + str(len(itemlist)))
     return itemlist
-
-def getTemporadas(item):
-    # Recorre cada una de las temporadas de una serie y devuelve todo sus capitulos
-    logger.info("[peliserie.py] getTemporadas")
-    itemlist = []
+    
+def getEpisodios (item):
+    # Devuelve todos los capitulos de una serie
+    logger.info("[peliserie.py] getEpisodios")
+    itemlist = []  
     list_fanart=''
     
-    data = re.sub(r"\n|\r|\t|\s{2}|(<!--.*?-->)","",scrapertools.cache_page(item.url))
-    patron = '<div class="tabs">(.*?)</div>'
-    data = scrapertools.get_match(data,patron)
-    patron= '<a href="\?season=(\d+)"'
-    seasons= re.compile(patron,re.DOTALL).findall(data)
-    
-    if item.extra != 'add_serie':
+    if item.extra != 'serie_add':
         #obtener fanart
         oTvdb= TvDb()
         serieID= oTvdb.get_serieId_by_title(item.show)
         if serieID !='0':
             list_fanart = oTvdb.get_graphics_by_serieId(serieID)
-            
-        logger.info("[peliserie.py] getTemporadas item.fanart =" + str(item.fanart))
-    
-    for s in seasons:
-        if '?season=' in item.url:
-            item.url= re.compile('\?season=\d+',re.DOTALL).sub('?season='+ s,item.url)
-        else:
-            item.url= item.url + '?season=1'
-        
-        if len(list_fanart) > 0:
-            item.fanart=random.choice(list_fanart)
-        else:
-            item.fanart=''
-        
-        if item.extra == "series" and len(seasons)>1:
-            itemlist.append( Item(channel=__channel__, title=item.show + ". Temporada "+ s, url=item.url, action='getEpisodios', show= item.show , thumbnail=item.thumbnail, fanart= item.fanart ))
-        else:
-            itemlist.extend(getEpisodios(item))
-    
-    if (config.get_platform().startswith("xbmc") or config.get_platform().startswith("boxee")) and len(itemlist)>0 and (item.extra == "series" or item.extra == "add_serie"):
-        itemlist.append( Item(channel=__channel__, title="Añadir esta serie a la biblioteca de XBMC", url=item.url, action="add_serie_to_library", extra='episodios###series', show= item.show))
-    
-    
-    return itemlist
-   
-def getEpisodios (item):
-    # Devuelve todos los capitulos de una temporada
-    logger.info("[peliserie.py] getEpisodios")
-    itemlist = []  
-  
+    if len(list_fanart) > 0:
+        item.fanart=random.choice(list_fanart)
+    else:
+        item.fanart=''
+                
     data = re.sub(r"\n|\r|\t|\s{2}|(<!--.*?-->)","",scrapertools.cache_page(item.url))
-    patron = 'id="chapters-list"(.*?)</ul></div>'
+    patron = '<div class="nav-pills(.*?)</div></div></div>'
     try:
         data = scrapertools.get_match(data,patron)
-            
-        '''
-        <li data-id="7075" data-name="1x01">
-            <a href="/view-serie/37/7075/Dos-hombres-y-medio-1x01-online" target="_blank">
-                <div class="column" style="width:90%">
-                    <strong>1x01 Temporada 1, capítulo 1 </strong>
-                    <img src="/images/flags/lang/flag_3.png"> 
-                    <img src="/images/flags/lang/flag_0.png"> 
-                </div>
-            </a>
-            <div class="column" style="width:10%">
-                <div class="actions"> 
-                </div>
-            </div>
-        </li>
-        '''
         patron= '<a href="([^"]+).*?' #url
         patron += '<strong>(\d+[x|X]\d+).*?</strong>.*?' #capitulo
         patron += '<img(.*?)</div>' # info:idiomas
@@ -291,11 +244,14 @@ def getEpisodios (item):
             action = "findvideos"
             
             itemlist.append(Item(channel=__channel__, action=action, title=title, url=url, show=show ,fanart= item.fanart, thumbnail= item.thumbnail,extra='series'))
+        
+        if config.get_library_support() and len(itemlist)>0 and item.extra.startswith("serie"):
+            itemlist.append( Item(channel=__channel__, title="Añadir esta serie a la biblioteca", url=item.url, action="add_serie_to_library", extra='episodios###series', show= item.show))
     except:
         pass
         
-    return itemlist        
-             
+    return itemlist 
+                 
 
 def findvideos(item):
     logger.info("[peliserie.py] findvideos extra: " + item.extra)
@@ -388,7 +344,7 @@ def play(item):
 
 def episodios(item):
     # Necesario para las actualizaciones automaticas
-    return getTemporadas(Item(url=item.url, show=item.show, extra= "add_serie"))
+    return getEpisodios(Item(url=item.url, show=item.show, extra= "serie_add"))
 
         
 # Verificación automática de canales: Esta función debe devolver "True" si todo está ok en el canal.
