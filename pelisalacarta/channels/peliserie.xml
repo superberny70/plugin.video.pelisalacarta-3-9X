@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <version>
 	<name>peliserie</name>
-	<tag>4</tag>
-	<date>20/07/2015</date>
-	<changes>Corregido bug de codificacion</changes>
+	<tag>5</tag>
+	<date>1/10/2015</date>
+	<changes>Corregido bug en Series</changes>
 </version>
