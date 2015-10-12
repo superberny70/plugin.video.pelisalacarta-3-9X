@@ -34,6 +34,9 @@ def get_platform():
 
 def get_library_support():
     return (PLATFORM_NAME.startswith("xbmc") or PLATFORM_NAME.startswith("kodi") or PLATFORM_NAME=="boxee")
+    
+def is_xbmc():
+    return (PLATFORM_NAME.startswith("xbmc") or PLATFORM_NAME.startswith("kodi"))
 
 def get_system_platform():
     try:

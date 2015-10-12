@@ -196,7 +196,7 @@ def EjecutarFuncion(item):
 
 # Funcion para Mostrar los resultados en XBMC:----------->OK
 def MostrarResultado(itemlist, refereditem):
-    logger.info("[launcher.py] - MostrarResultado")# + str(sys.argv))
+    logger.info("[launcher.py] - MostrarResultado " + refereditem.tostring() )# + str(sys.argv))
     
     Mostrar = True    
     for item in itemlist:
