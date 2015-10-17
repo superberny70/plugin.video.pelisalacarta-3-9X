@@ -39,7 +39,7 @@ def mainlist(item):
     itemlist.append( Item(channel=__channel__, action="submenu", title="Filtrar series por género y década", url=__url_base__+'/series', extra="series") )
     itemlist.append( Item(channel=__channel__, action="search", title="Buscar") )
     
-    #itemlist.append( Item(channel=__channel__, action="tmdb", title="Test TMDB") )
+    itemlist.append( Item(channel=__channel__, action="tmdb", title="Test TMDB") )
     #logger.info("[peliserie.py] login: "+ str(login()))
     
     return itemlist
@@ -182,7 +182,7 @@ def getEpisodios (item):
     try:
         from core.tmdb import Tmdb
         oTmdb= Tmdb(texto_buscado=item.show,year=year,tipo="tv")
-        item.fanart=oTmdb.get_fanart()
+        item.fanart=oTmdb.get_backdrop()
     except:
         pass
   
@@ -215,6 +215,17 @@ def getEpisodios (item):
             title = show + ' ' + capitulo + idiomas
             action = "findvideos"
             
+            try:
+                # añadimos sinopsis e imagenes para cada capitulo
+                temporada=capitulo.split('x')[0]
+                episodio=oTmdb.get_episodio(temporada=capitulo.split('x')[0],capitulo=capitulo.split('x')[1])
+                if episodio["episodio_sinopsis"] !="": sinopsis= episodio["episodio_sinopsis"]
+                if episodio["episodio_imagen"] !="": item.thumbnail= episodio["episodio_imagen"]
+                if episodio["episodio_titulo"] !="": title = title + ": " + episodio["episodio_titulo"]
+            except:
+                pass
+            
+
             itemlist.append(Item(channel=__channel__, action=action, title=title, viewmode="movie_with_plot", url=url, show=show ,fanart= item.fanart, thumbnail= item.thumbnail,extra='series',plot=sinopsis))
         
         if config.get_library_support() and len(itemlist)>0 and item.extra.startswith("serie"):
@@ -240,7 +251,7 @@ def findvideos(item):
         try:
             from core.tmdb import Tmdb
             oTmdb= Tmdb(texto_buscado=item.show,year=year)
-            item.fanart=oTmdb.get_fanart()
+            item.fanart=oTmdb.get_backdrop()
         except:
             pass
         
@@ -344,12 +355,28 @@ def test():
 
     return False
       
-
-'''def tmdb(item):
+      
+def tmdb(item):
     from core.tmdb import Tmdb
-    oTmdb= Tmdb(id_Tmdb='1924',tipo='movie')
-    print oTmdb.get_poster(rnd= True, size="w185")
+    #oTmdb= Tmdb(id_Tmdb='1399',tipo='tv')
+    #print oTmdb.get_poster(rnd= True, size="w185")
+    #oTmdb= Tmdb(texto_buscado='juego de tronos',tipo='tv')
+    oTmdb= Tmdb(external_id='121361',tipo='tv',external_source="tvdb_id")
+    print "id: " + oTmdb.get_id()
+    #print oTmdb.get_episodio(2,5)
+    #print oTmdb.get_episodio(2,1)
+    print oTmdb.get_sinopsis()
+    #oTmdb= Tmdb(id_Tmdb='1419',tipo='tv')
+    #print oTmdb.get_fanart(temporada=2, tipo="seasonthumb", idioma=["fr","all"])
+    #print oTmdb.get_fanart(tipo="poster", idioma=["es","00","all"])
+    #print oTmdb.get_poster(tipo_respuesta="str",size="w300")
     
+    #print oTmdb.get_backdrop(tipo_respuesta="list",size="w1280")
+    #print oTmdb.result['tvdb_id']
+    #print oTmdb.get_fanart(tipo="banner")
+    #print oTmdb.get_fanart(tipo="poster")
+    
+'''    
 def login2():# no funciona
     url= 'http://www.peliserie.com/query/login.php'
     post = "username="+config.get_setting("peliserieuser")+"&password="+config.get_setting("peliseriepassword")
