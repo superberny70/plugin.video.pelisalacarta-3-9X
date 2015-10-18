@@ -97,7 +97,7 @@ def listado(item):
     data = unicode( data, "iso-8859-1" , errors="replace" ).encode("utf-8")    
         
     patron = '<ul class="'+item.extra+'">(.*?)</ul>'
-    logger.info("[newpct1.py] patron="+patron)
+    #logger.info("[newpct1.py] patron="+patron)
     fichas = scrapertools.get_match(data,patron)
 
     #<li><a href="http://www.newpct1.com/pelicula/x-men-dias-del-futuro-pasado/ts-screener/" title="Descargar XMen Dias Del Futuro gratis"><img src="http://www.newpct1.com/pictures/f/58066_x-men-dias-del-futuro--blurayrip-ac3-5.1.jpg" width="130" height="180" alt="Descargar XMen Dias Del Futuro gratis"><h2>XMen Dias Del Futuro </h2><span>BluRayRip AC3 5.1</span></a></li>
@@ -143,12 +143,13 @@ def listado(item):
         else:    
             title= title.replace("Descargar","",1).strip()
             if title.endswith("gratis"): title= title[:-7]
-        
-        show = title
+            
+            
+        show = title    
         if item.extra!="buscar-list":
             title = title + ' ' + calidad
             
-        itemlist.append( Item(channel=__channel__, action=action, title=title, url=url, thumbnail=thumbnail, extra=extra, show=show ) )
+        itemlist.append( Item(channel=__channel__, action=action, title=title, url=url, thumbnail=thumbnail, extra=extra, show=show, fanart=item.fanart) )
 
     if "pagination" in data:
         patron = '<ul class="pagination">(.*?)</ul>'
@@ -186,14 +187,16 @@ def completo(item):
                 item.url=item.url.replace("categoryID=","categoryID="+categoryID)
                 
             #Fanart
-            oTvdb= TvDb()
-            serieID=oTvdb.get_serieId_by_title(item.show)
-            fanart = oTvdb.get_graphics_by_serieId(serieID)
-            if len(fanart)>0:
-                item.fanart = fanart[0]
+            try:
+                from core.tmdb import Tmdb
+                oTmdb= Tmdb(texto_buscado=item.show,tipo="tv",idioma_busqueda="es")
+                item.fanart=oTmdb.get_backdrop()
+                item.plot=oTmdb.get_sinopsis()
+                print item.plot
+            except:
+                pass
         else:
             item_title= item.show
-            item.title= item.show
         
         items_programas = get_episodios(item)        
     else:
@@ -232,7 +235,22 @@ def completo(item):
             # Añade a la lista completa y sale
             itemlist.extend( items_programas )
             salir = True          
-      
+    
+    # Añadimos sinopsis e imagenes para cada capitulo
+    try:
+        if oTmdb.get_id !="":
+            for i in itemlist:
+                num_episodio=i.title.rsplit('(')[1].split(')')[0]
+                try:
+                    episodio=oTmdb.get_episodio(temporada=num_episodio.split('x')[0],capitulo=num_episodio.split('x')[1])
+                    if episodio["episodio_sinopsis"] !="": i.plot= episodio["episodio_sinopsis"]
+                    if episodio["episodio_imagen"] !="": i.thumbnail= episodio["episodio_imagen"]
+                    if episodio["episodio_titulo"] !="": i.title = i.title + ": " + episodio["episodio_titulo"]
+                except: pass
+    except:
+        pass
+
+    
     if (config.get_library_support() and len(itemlist)>0 and item.extra.startswith("serie")) :
         itemlist.append( Item(channel=item.channel, title="Añadir esta serie a la biblioteca", url=item.url, action="add_serie_to_library", extra="completo###serie_add" , show= item.show))
     logger.info("[newpct1.py] completo items="+ str(len(itemlist)))
@@ -245,7 +263,7 @@ def get_episodios(item):
     data = re.sub(r'\n|\r|\t|\s{2}|<!--.*?-->|<i class="icon[^>]+"></i>',"",scrapertools.cache_page(item.url))
     data = unicode( data, "iso-8859-1" , errors="replace" ).encode("utf-8")
     
-    logger.info("[newpct1.py] data=" +data)
+    #logger.info("[newpct1.py] data=" +data)
       
     patron = '<ul class="buscar-list">(.*?)</ul>'
     #logger.info("[newpct1.py] patron=" + patron)
@@ -307,7 +325,7 @@ def get_episodios(item):
                 title = item.title + " ("+ temp + 'x' + cap + ")"
             
             #logger.info("[newpct1.py] get_episodios: fanart= " +item.fanart)
-            itemlist.append( Item(channel=__channel__, action="findvideos", title=title, url=url, thumbnail=item.thumbnail, show=item.show, fanart=item.fanart) )
+            itemlist.append( Item(channel=__channel__, action="findvideos", title=title, url=url, thumbnail=item.thumbnail, show=item.show, fanart=item.fanart, plot= item.plot) )
         except:
             logger.info("[newpct1.py] ERROR al añadir un episodio")
     if "pagination" in data:
@@ -337,7 +355,21 @@ def buscar_en_subcategoria(titulo, categoria):
 def findvideos(item):
     logger.info("[newpct1.py] findvideos")
     itemlist=[]   
-          
+    
+
+    if "1.com/pelicula" in item.url:
+        # Buscamos el fanart en TMDB
+        try:
+            year=scrapertools.find_single_match(item.show,'(\d{4}$)')
+            show = item.show.replace(year,"")
+            from core.tmdb import Tmdb
+            oTmdb= Tmdb(texto_buscado=show,year=year,tipo="movie")
+            item.fanart=oTmdb.get_backdrop()
+            item.plot=oTmdb.get_sinopsis()
+        except:
+            pass
+            
+    
     ## Cualquiera de las tres opciones son válidas
     #item.url = item.url.replace("1.com/","1.com/ver-online/")
     #item.url = item.url.replace("1.com/","1.com/descarga-directa/")
@@ -358,7 +390,7 @@ def findvideos(item):
     # escraped torrent
     url = scrapertools.find_single_match(data,patron)
     if url!="":
-        itemlist.append( Item(channel=__channel__, action="play", server="torrent", title=title+" [torrent]", fulltitle=title, url=url , thumbnail=caratula, plot=item.plot, folder=False) )
+        itemlist.append( Item(fanart=item.fanart, channel=__channel__, action="play", server="torrent", title=title+" [torrent]", fulltitle=title, url=url , thumbnail=caratula, plot=item.plot, folder=False) )
 
     # escraped ver vídeos, descargar vídeos un link, múltiples liks
     data = data.replace("'",'"')
@@ -389,7 +421,7 @@ def findvideos(item):
         if config.get_setting("hidepremium")=="true":
             mostrar_server= servertools.is_server_enabled (servidor)
         if mostrar_server:
-            itemlist.append( Item(channel=__channel__, action="play", server=servidor, title=titulo , fulltitle = item.title, url=enlace , thumbnail=logo , plot=item.plot , folder=False) )
+            itemlist.append( Item(fanart=item.fanart, channel=__channel__, action="play", server=servidor, title=titulo , fulltitle = item.title, url=enlace , thumbnail=logo , plot=item.plot , folder=False) )
 
     for logo, servidor, idioma, calidad, enlace, titulo in enlaces_descargar:
         servidor = servidor.replace("uploaded","uploadedto")
@@ -402,7 +434,7 @@ def findvideos(item):
             if config.get_setting("hidepremium")=="true":
                 mostrar_server= servertools.is_server_enabled (servidor)
             if mostrar_server:
-                itemlist.append( Item(channel=__channel__, action="play", server=servidor, title=parte_titulo , fulltitle = item.title, url=enlace , thumbnail=logo , plot=item.plot , folder=False) )
+                itemlist.append( Item(fanart=item.fanart, channel=__channel__, action="play", server=servidor, title=parte_titulo , fulltitle = item.title, url=enlace , thumbnail=logo , plot=item.plot , folder=False) )
 
     return itemlist
 
@@ -427,12 +459,7 @@ def test():
 
     return False
       
-    
-'''    
-   Clase TvDb
-   Esta clase podria ir en un fichero externo para ser utilizado por otros canales
-''' 
-class TvDb():
+
     
     def __init__(self,idiomaDef="es"):
         self.__idiomaDef = idiomaDef #fija el idioma por defecto para el resto de metodos
