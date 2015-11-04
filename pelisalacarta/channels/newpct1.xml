@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <version>
 	<name>newpct1</name>
-	<tag>11</tag>
-	<date>30/09/15</date>
-	<changes>Corregir bug en Series</changes>
+	<tag>12</tag>
+	<date>30/10/15</date>
+	<changes>Incluida llamada a server.find_videos(server) en findvideos.</changes>
 </version>
