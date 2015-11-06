@@ -1,8 +1,9 @@
-﻿# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 #------------------------------------------------------------
 # pelisalacarta - XBMC Plugin
 # XBMC Tools
 # http://blog.tvalacarta.info/plugin-xbmc/pelisalacarta/
+# Modificado por super_berny: inclusion de infoLabels
 #------------------------------------------------------------
 
 import urllib, urllib2
@@ -53,8 +54,10 @@ def addnewfolderextra( canal , accion , category , title , url , thumbnail , plo
             logger.info('[xbmctools.py] addnewfolder(<unicode>)')
     listitem = xbmcgui.ListItem( title, iconImage="DefaultFolder.png", thumbnailImage=thumbnail )
 
-    listitem.setInfo( "video", { "Title" : title, "Plot" : plot, "Studio" : canal } )
-
+    listitem.setInfo( "video", { "Title" : title, "Plot" : plot, "Studio" : canal.capitalize() } )
+    
+    set_infoLabels(listitem,plot) # Modificacion introducida por super_berny para añadir infoLabels al ListItem
+        
     if fanart!="":
         listitem.setProperty('fanart_image',fanart) 
         xbmcplugin.setPluginFanart(pluginhandle, fanart)
@@ -125,8 +128,10 @@ def addnewvideo( canal , accion , category , server , title , url , thumbnail, p
         icon_image = "DefaultVideo.png"
      
     listitem = xbmcgui.ListItem( title, iconImage="DefaultVideo.png", thumbnailImage=thumbnail )
-    listitem.setInfo( "video", { "Title" : title, "FileName" : title, "Plot" : plot, "Duration" : duration, "Studio" : canal, "Genre" : category } )
+    listitem.setInfo( "video", { "Title" : title, "FileName" : title, "Plot" : plot, "Duration" : duration, "Studio" : canal.capitalize(), "Genre" : category } )
 
+    set_infoLabels(listitem,plot) # Modificacion introducida por super_berny para añadir infoLabels al ListItem
+        
     if fanart!="":
         #logger.info("fanart :%s" %fanart)
         listitem.setProperty('fanart_image',fanart)
@@ -468,7 +473,7 @@ def play_video(channel="",server="",url="",category="",title="", thumbnail="",pl
         return
 
     elif opciones[seleccion]==config.get_localized_string(30161): #"Añadir a Biblioteca":  # Library
-        from platformcode.xbmc import library
+        from platformcode import library
         titulo = fulltitle
         if fulltitle=="":
             titulo = title
@@ -512,7 +517,9 @@ def play_video(channel="",server="",url="",category="",title="", thumbnail="",pl
         except:
             xlistitem = xbmcgui.ListItem( title, iconImage="DefaultVideo.png", thumbnailImage=thumbnail)
         xlistitem.setInfo( "video", { "Title": title, "Plot" : plot , "Studio" : channel , "Genre" : category } )
-
+        
+        #set_infoLabels(listitem,plot) # Modificacion introducida por super_berny para añadir infoLabels al ListItem
+    
     # Descarga el subtitulo
     if channel=="cuevana" and subtitle!="" and (opciones[seleccion].startswith("Ver") or opciones[seleccion].startswith("Watch")):
         logger.info("b5")
@@ -558,15 +565,6 @@ def play_video(channel="",server="",url="",category="",title="", thumbnail="",pl
 
         elif config.get_setting("player_mode")=="0" or (config.get_setting("player_mode")=="3" and mediaurl.startswith("rtmp")):
             logger.info("b8")
-            
-            ## play_torrent - pelisalacarta-MCT
-            if mediaurl.endswith( "MCT" ):
-                import re
-                mediaurl = re.sub( r'MCT$', '', mediaurl )
-                import mct
-                mct.play( mediaurl )
-                return
-            
             # Añadimos el listitem a una lista de reproducción (playlist)
             playlist = xbmc.PlayList( xbmc.PLAYLIST_VIDEO )
             playlist.clear()
@@ -642,7 +640,7 @@ def play_video(channel="",server="",url="",category="",title="", thumbnail="",pl
 
     if config.get_setting("subtitulo") == "true" and view:
         logger.info("b11")
-        from core import subtitletools
+        from platformcode import subtitletools
         wait2second()
         subtitletools.set_Subtitle()
         if subtitle!="":
@@ -824,7 +822,7 @@ def playstrm(params,url,category):
     else:
         subtitle = ""
     from core.item import Item
-    from core.subtitletools import saveSubtitleName
+    from platformcode.subtitletools import saveSubtitleName
     item = Item(title=title,show=serie)
     saveSubtitleName(item)
     play_video("Biblioteca pelisalacarta",server,url,category,title,thumbnail,plot,strmfile=True,Serie=serie,subtitle=subtitle)
@@ -937,3 +935,19 @@ def alert_no_puedes_ver_video(server,url,motivo):
             resultado = advertencia.ok( "No puedes ver ese vídeo porque...",motivo,url)
     else:
         resultado = advertencia.ok( "No puedes ver ese vídeo porque...","El servidor donde está alojado no está","soportado en pelisalacarta todavía",url)
+        
+def set_infoLabels(listitem,plot):
+    # Modificacion introducida por super_berny para añadir infoLabels al ListItem
+    if plot.startswith("{'infoLabels'"):
+        # Necesitaba un parametro que pase los datos desde Item hasta esta funcion 
+        # y el que parecia mas idoneo era plot.
+        # plot tiene que ser un str con el siguiente formato:
+        #   plot="{'infoLabels':{dicionario con los pares de clave/valor descritos en 
+        #               http://mirrors.xbmc.org/docs/python-docs/14.x-helix/xbmcgui.html#ListItem-setInfo}}"
+        try:
+            import ast
+            infodict=ast.literal_eval(plot)['infoLabels']
+            listitem.setInfo( "video", infodict)
+        except:
+            pass
+            
