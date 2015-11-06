@@ -41,6 +41,7 @@ class Item(object):
       
       self.thumbnail = thumbnail
       self.plot = plot
+      if duration == "": duration = 0
       self.duration = self.StringToTime(duration)
       self.fanart = fanart
       self.folder = bool(folder)
