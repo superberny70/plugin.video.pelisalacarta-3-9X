@@ -14,13 +14,11 @@ from core.item import Item
 from servers import servertools
 
 __channel__ = "pornhub"
-__adult__ = "true"
-__category__ = "F,X"
+__category__ = "F"
 __type__ = "generic"
 __title__ = "PornHub"
 __language__ = "ES"
 __fanart__="http://i.imgur.com/PwFvoss.jpg"
-__thumbnail__ = "http://s22.postimg.org/5lzcocfqp/pornhub_logo.jpg"
 
 DEBUG = config.get_setting("debug")
 
@@ -50,9 +48,10 @@ def mainlist(item):
     '''
     
     # Extrae las categorias
-    patron  = '<li class="cat_pic" data-category="\d+">.*?'
-    patron += '<a href="([^"]+)">'
-    patron += '<img src="([^"]+)" '
+    patron  = '<li class="cat_pic" data-category=".*?'
+    #patron  = '<li class="cat_pic" data-category="\d+">.*?'
+    patron += '<a href="([^"]+)".*?'
+    patron += '<img src="([^"]+)".*?'
     patron += 'alt="([^"]+)"'
         
     matches = re.compile(patron,re.DOTALL).findall(data)
