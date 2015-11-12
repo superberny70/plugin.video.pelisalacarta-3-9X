@@ -1,0 +1,14 @@
+{
+  "channel": {
+    "id": "animeflv",
+    "name": "AnimeFLV",
+    "language": "es",
+    "active": "true",
+    "include_in_global_search": "true",
+    "version": "3",
+    "adult": "false",
+    "date": "24/10/2015",
+    "changes": "resueltos problemas utf, libreria requests, pep8 conventions, etc",
+    "categories": { "category": "anime" }
+  }
+}
